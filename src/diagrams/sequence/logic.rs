@@ -165,7 +165,8 @@ mod tests {
 
         let mermaid = logic.to_mermaid();
         assert!(mermaid.contains("loop Every minute"));
-        assert!(mermaid.contains("Server->Client: ping"));
+        // mermaid-py defaults to SolidArrow (->>)
+        assert!(mermaid.contains("Server->>Client: ping"));
         assert!(mermaid.contains("end"));
     }
 

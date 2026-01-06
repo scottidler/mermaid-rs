@@ -29,7 +29,8 @@ impl Node {
 
     /// Renders the node in mermaid syntax
     pub fn to_mermaid(&self) -> String {
-        format!("{}{}", self.id, self.shape.wrap(&self.label))
+        // mermaid-py lowercases IDs
+        format!("{}{}", self.id.to_lowercase(), self.shape.wrap(&self.label))
     }
 }
 
@@ -110,7 +111,8 @@ mod tests {
     #[test]
     fn node_to_mermaid() {
         let node = Node::new("A", "Start", NodeShape::Stadium);
-        assert_eq!(node.to_mermaid(), "A([\"Start\"])");
+        // mermaid-py lowercases IDs
+        assert_eq!(node.to_mermaid(), "a([\"Start\"])");
     }
 
     #[test]

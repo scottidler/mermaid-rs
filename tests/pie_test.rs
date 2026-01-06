@@ -13,8 +13,9 @@ fn pie_chart_empty() {
 #[test]
 fn pie_chart_with_title() {
     let chart = PieChart::builder().title("My Chart").build();
-    let mermaid = chart.to_mermaid();
-    assert!(mermaid.contains("title My Chart"));
+    // mermaid-py puts title in frontmatter, not in the diagram body
+    let script = chart.build_script();
+    assert!(script.contains("title: My Chart"));
 }
 
 #[test]
@@ -48,8 +49,10 @@ fn pie_chart_from_json() {
 
     let chart = PieChart::from_json(json).unwrap();
     let mermaid = chart.to_mermaid();
+    let script = chart.build_script();
 
-    assert!(mermaid.contains("title Languages"));
+    // mermaid-py puts title in frontmatter
+    assert!(script.contains("title: Languages"));
     assert!(mermaid.contains("\"Rust\" : 40"));
 }
 
@@ -67,9 +70,11 @@ data:
 
     let chart = PieChart::from_yaml(yaml).unwrap();
     let mermaid = chart.to_mermaid();
+    let script = chart.build_script();
 
     assert!(mermaid.contains("showData"));
-    assert!(mermaid.contains("title Languages"));
+    // mermaid-py puts title in frontmatter
+    assert!(script.contains("title: Languages"));
 }
 
 #[test]

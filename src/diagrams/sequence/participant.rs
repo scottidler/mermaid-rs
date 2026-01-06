@@ -31,6 +31,15 @@ impl Participant {
         }
     }
 
+    /// Create a participant (not actor) explicitly
+    pub fn non_actor(id: impl Into<String>) -> Self {
+        Self {
+            id: id.into(),
+            label: None,
+            participant_type: ParticipantType::Participant,
+        }
+    }
+
     pub fn to_mermaid(&self) -> String {
         let keyword = match self.participant_type {
             ParticipantType::Actor => "actor",
@@ -47,8 +56,8 @@ impl Participant {
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ParticipantType {
-    #[default]
     Participant,
+    #[default]
     Actor,
 }
 
@@ -103,13 +112,13 @@ mod tests {
     #[test]
     fn participant_basic() {
         let p = Participant::new("Alice");
-        assert_eq!(p.to_mermaid(), "participant Alice");
+        assert_eq!(p.to_mermaid(), "actor Alice");
     }
 
     #[test]
     fn participant_with_label() {
         let p = Participant::new("A").with_label("Alice");
-        assert_eq!(p.to_mermaid(), "participant A as Alice");
+        assert_eq!(p.to_mermaid(), "actor A as Alice");
     }
 
     #[test]

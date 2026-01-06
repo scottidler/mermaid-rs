@@ -39,9 +39,12 @@ impl Transition {
     }
 
     pub fn to_mermaid(&self) -> String {
+        // mermaid-py lowercases state IDs (but not [*])
+        let from = if self.from == "[*]" { self.from.clone() } else { self.from.to_lowercase() };
+        let to = if self.to == "[*]" { self.to.clone() } else { self.to.to_lowercase() };
         match &self.label {
-            Some(label) => format!("{} --> {}: {}", self.from, self.to, label),
-            None => format!("{} --> {}", self.from, self.to),
+            Some(label) => format!("{} --> {} : {}", from, to, label),
+            None => format!("{} --> {}", from, to),
         }
     }
 }
@@ -159,25 +162,27 @@ mod tests {
     #[test]
     fn transition_basic() {
         let t = Transition::new("A", "B");
-        assert_eq!(t.to_mermaid(), "A --> B");
+        // mermaid-py lowercases state IDs
+        assert_eq!(t.to_mermaid(), "a --> b");
     }
 
     #[test]
     fn transition_with_label() {
         let t = Transition::new("A", "B").with_label("event");
-        assert_eq!(t.to_mermaid(), "A --> B: event");
+        assert_eq!(t.to_mermaid(), "a --> b : event");
     }
 
     #[test]
     fn transition_from_start() {
         let t = Transition::from_start("Init");
-        assert_eq!(t.to_mermaid(), "[*] --> Init");
+        // [*] stays as-is, but Init gets lowercased
+        assert_eq!(t.to_mermaid(), "[*] --> init");
     }
 
     #[test]
     fn transition_to_end() {
         let t = Transition::to_end("Final");
-        assert_eq!(t.to_mermaid(), "Final --> [*]");
+        assert_eq!(t.to_mermaid(), "final --> [*]");
     }
 
     #[test]

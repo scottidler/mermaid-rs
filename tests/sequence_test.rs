@@ -44,8 +44,9 @@ fn sequence_with_messages() {
         .build();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("Alice->Bob: Hello!"));
-    assert!(mermaid.contains("Bob->Alice: Hi!"));
+    // mermaid-py defaults to SolidArrow (->>)
+    assert!(mermaid.contains("Alice->>Bob: Hello!"));
+    assert!(mermaid.contains("Bob->>Alice: Hi!"));
 }
 
 #[test]
@@ -180,7 +181,8 @@ notes:
 
     assert!(mermaid.contains("actor User"));
     assert!(mermaid.contains("Auth as Auth Service"));
-    assert!(mermaid.contains("User->App"));
+    // mermaid-py defaults to SolidArrow (->>)
+    assert!(mermaid.contains("User->>App"));
 }
 
 #[test]
@@ -207,7 +209,8 @@ text = "Hello"
     let mermaid = diagram.to_mermaid();
 
     assert!(mermaid.contains("autonumber"));
-    assert!(mermaid.contains("A->B: Hello"));
+    // mermaid-py defaults to SolidArrow (->>)
+    assert!(mermaid.contains("A->>B: Hello"));
 }
 
 #[test]

@@ -81,16 +81,12 @@ impl Diagram for PieChart {
             output.push_str(" showData");
         }
 
-        // Add title if present
-        if let Some(title) = &self.title {
-            output.push_str(&format!(" title {}", title));
-        }
-
+        // Title goes in frontmatter, not on pie line (matches mermaid-py)
         output.push('\n');
 
         // Add data entries
         for entry in &self.data {
-            output.push_str(&format!("    \"{}\" : {}\n", entry.label, entry.value));
+            output.push_str(&format!("\t\"{}\" : {}\n", entry.label, entry.value));
         }
 
         output
@@ -193,8 +189,9 @@ mod tests {
             .build();
 
         let mermaid = chart.to_mermaid();
-        assert!(mermaid.contains("pie"));
-        assert!(mermaid.contains("title Browser Market Share"));
+        assert!(mermaid.starts_with("pie\n"));
+        // Title goes in frontmatter, not on pie line
+        assert!(!mermaid.contains("title Browser Market Share"));
         assert!(mermaid.contains("\"Chrome\" : 65"));
         assert!(mermaid.contains("\"Firefox\" : 20"));
     }
@@ -249,7 +246,7 @@ data:
 
     #[test]
     fn pie_chart_raw_mermaid() {
-        let raw = "pie title Test\n    \"A\" : 50\n    \"B\" : 50";
+        let raw = "pie\n\t\"A\" : 50\n\t\"B\" : 50";
         let chart = PieChart::from_raw_mermaid(raw.to_string());
         assert_eq!(chart.to_mermaid(), raw);
     }

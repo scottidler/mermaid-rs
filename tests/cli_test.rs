@@ -63,7 +63,8 @@ fn cli_pie_mermaid_output() {
 
     assert!(output.status.success());
     assert!(stdout.contains("pie"));
-    assert!(stdout.contains("title Test"));
+    // mermaid-py puts title in frontmatter, not on pie line
+    assert!(stdout.contains("title: Test") || stdout.contains("title Test"));
     assert!(stdout.contains("\"A\" : 50"));
     assert!(stdout.contains("\"B\" : 50"));
 }
@@ -154,8 +155,9 @@ fn cli_flowchart_mermaid_output() {
 
     assert!(output.status.success());
     assert!(stdout.contains("flowchart"));
-    assert!(stdout.contains("A([\"Start\"])"));
-    assert!(stdout.contains("A --> B"));
+    // mermaid-py lowercases node IDs
+    assert!(stdout.contains("a([\"Start\"])"));
+    assert!(stdout.contains("a --> b"));
 }
 
 #[test]
@@ -291,8 +293,9 @@ fn cli_state_mermaid_output() {
 
     assert!(output.status.success());
     assert!(stdout.contains("stateDiagram-v2"));
-    assert!(stdout.contains("[*] --> Inactive"));
-    assert!(stdout.contains("Inactive --> Active: start"));
+    // mermaid-py lowercases state IDs
+    assert!(stdout.contains("[*] --> inactive"));
+    assert!(stdout.contains("inactive --> active : start"));
 }
 
 #[test]

@@ -61,18 +61,19 @@ impl Diagram for ERDiagram {
             return raw.clone();
         }
 
-        let mut output = String::from("erDiagram\n");
+        let mut output = String::from("erDiagram");
 
         // Entities
         for entity in &self.entities {
-            output.push_str(&entity.to_mermaid());
+            output.push_str(&format!("\n\t{}", entity.to_mermaid()));
         }
 
         // Relationships
         for rel in &self.relationships {
-            output.push_str(&rel.to_mermaid());
+            output.push_str(&format!("\n\t{}", rel.to_mermaid()));
         }
 
+        output.push('\n');
         output
     }
 }

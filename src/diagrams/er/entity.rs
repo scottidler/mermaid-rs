@@ -26,16 +26,13 @@ impl Entity {
     }
 
     pub fn to_mermaid(&self) -> String {
-        if self.attributes.is_empty() {
-            format!("    {}\n", self.name)
-        } else {
-            let mut output = format!("    {} {{\n", self.name);
-            for attr in &self.attributes {
-                output.push_str(&format!("        {}\n", attr.to_mermaid()));
-            }
-            output.push_str("    }\n");
-            output
+        // mermaid-py always outputs braces, even for empty entities
+        let mut output = format!("{}{{\n", self.name);
+        for attr in &self.attributes {
+            output.push_str(&format!("\t{}\n", attr.to_mermaid()));
         }
+        output.push('}');
+        output
     }
 }
 
@@ -164,7 +161,9 @@ mod tests {
     #[test]
     fn entity_basic() {
         let entity = Entity::new("User");
-        assert!(entity.to_mermaid().contains("User"));
+        let mermaid = entity.to_mermaid();
+        assert!(mermaid.contains("User{"));
+        assert!(mermaid.contains("}"));
     }
 
     #[test]
@@ -174,7 +173,7 @@ mod tests {
             .with_attribute(Attribute::new(AttributeType::String, "name"));
 
         let mermaid = entity.to_mermaid();
-        assert!(mermaid.contains("User {"));
+        assert!(mermaid.contains("User{"));
         assert!(mermaid.contains("int id PK"));
         assert!(mermaid.contains("string name"));
     }

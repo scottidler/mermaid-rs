@@ -34,10 +34,12 @@ impl Section {
     }
 
     pub fn to_mermaid(&self) -> String {
-        let mut output = format!("    section {}\n", self.name);
+        let mut output = format!("\tsection {}\n", self.name);
         for task in &self.tasks {
             output.push_str(&task.to_mermaid());
         }
+        // mermaid-py adds empty line after section
+        output.push('\n');
         output
     }
 }
@@ -52,8 +54,9 @@ mod tests {
 
         let mermaid = section.to_mermaid();
         assert!(mermaid.contains("section Onboarding"));
-        assert!(mermaid.contains("Sign up: 5"));
-        assert!(mermaid.contains("Verify email: 3"));
+        // mermaid-py format: {name}: {score} : {actors}
+        assert!(mermaid.contains("Sign up: 5 : "));
+        assert!(mermaid.contains("Verify email: 3 : "));
     }
 
     #[test]

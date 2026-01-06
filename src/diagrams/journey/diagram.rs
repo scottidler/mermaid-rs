@@ -61,7 +61,7 @@ impl Diagram for Journey {
         let mut output = String::from("journey\n");
 
         if let Some(title) = &self.title {
-            output.push_str(&format!("    title {}\n", title));
+            output.push_str(&format!("\ttitle {}\n", title));
         }
 
         for section in &self.sections {

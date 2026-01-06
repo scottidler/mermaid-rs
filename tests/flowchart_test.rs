@@ -27,9 +27,10 @@ fn flowchart_with_nodes() {
         .build();
     let mermaid = chart.to_mermaid();
 
-    assert!(mermaid.contains("A([\"Start\"])"));
-    assert!(mermaid.contains("B[\"Process\"]"));
-    assert!(mermaid.contains("C([\"End\"])"));
+    // mermaid-py lowercases node IDs
+    assert!(mermaid.contains("a([\"Start\"])"));
+    assert!(mermaid.contains("b[\"Process\"]"));
+    assert!(mermaid.contains("c([\"End\"])"));
 }
 
 #[test]
@@ -40,7 +41,8 @@ fn flowchart_with_links() {
         .link_simple("A", "B")
         .build();
     let mermaid = chart.to_mermaid();
-    assert!(mermaid.contains("A --> B"));
+    // mermaid-py lowercases node IDs
+    assert!(mermaid.contains("a --> b"));
 }
 
 #[test]
@@ -107,7 +109,8 @@ fn flowchart_from_json() {
     let mermaid = chart.to_mermaid();
 
     assert!(mermaid.contains("flowchart LR"));
-    assert!(mermaid.contains("A([\"Start\"])"));
+    // mermaid-py lowercases node IDs
+    assert!(mermaid.contains("a([\"Start\"])"));
     assert!(mermaid.contains("-->|next|"));
 }
 
@@ -164,8 +167,9 @@ to = "B"
     let chart = FlowChart::from_toml(toml).unwrap();
     let mermaid = chart.to_mermaid();
 
-    assert!(mermaid.contains("A([\"Start\"])"));
-    assert!(mermaid.contains("A --> B"));
+    // mermaid-py lowercases node IDs
+    assert!(mermaid.contains("a([\"Start\"])"));
+    assert!(mermaid.contains("a --> b"));
 }
 
 #[test]

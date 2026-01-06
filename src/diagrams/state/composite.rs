@@ -87,9 +87,10 @@ mod tests {
 
         let mermaid = composite.to_mermaid();
         assert!(mermaid.contains("state \"Parent State\" as Parent"));
-        assert!(mermaid.contains("Child1"));
-        assert!(mermaid.contains("Child2"));
-        assert!(mermaid.contains("Child1 --> Child2"));
+        // mermaid-py lowercases state IDs
+        assert!(mermaid.contains("child1"));
+        assert!(mermaid.contains("child2"));
+        assert!(mermaid.contains("child1 --> child2"));
         assert!(mermaid.contains("}"));
     }
 
@@ -103,7 +104,8 @@ mod tests {
             .with_transition(Transition::to_end("Done"));
 
         let mermaid = composite.to_mermaid();
-        assert!(mermaid.contains("[*] --> Init"));
-        assert!(mermaid.contains("Done --> [*]"));
+        // mermaid-py lowercases state IDs
+        assert!(mermaid.contains("[*] --> init"));
+        assert!(mermaid.contains("done --> [*]"));
     }
 }

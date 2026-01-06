@@ -29,9 +29,10 @@ fn state_diagram_with_states() {
         .build();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("Active"));
-    assert!(mermaid.contains("Inactive"));
-    assert!(mermaid.contains("Pending: Waiting for approval"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("active"));
+    assert!(mermaid.contains("inactive"));
+    assert!(mermaid.contains("pending : Waiting for approval"));
 }
 
 #[test]
@@ -44,8 +45,9 @@ fn state_diagram_with_transitions() {
         .build();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("Off --> On"));
-    assert!(mermaid.contains("On --> Off"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("off --> on"));
+    assert!(mermaid.contains("on --> off"));
 }
 
 #[test]
@@ -58,8 +60,9 @@ fn state_diagram_with_transition_labels() {
         .build();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("Idle --> Running: start"));
-    assert!(mermaid.contains("Running --> Idle: stop"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("idle --> running : start"));
+    assert!(mermaid.contains("running --> idle : stop"));
 }
 
 #[test]
@@ -71,8 +74,9 @@ fn state_diagram_with_start_end() {
         .build();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("[*] --> Active"));
-    assert!(mermaid.contains("Active --> [*]"));
+    // mermaid-py lowercases state IDs (except [*])
+    assert!(mermaid.contains("[*] --> active"));
+    assert!(mermaid.contains("active --> [*]"));
 }
 
 #[test]
@@ -127,8 +131,9 @@ fn state_diagram_with_composite() {
     let mermaid = diagram.to_mermaid();
 
     assert!(mermaid.contains("state \"Parent State\" as Parent"));
-    assert!(mermaid.contains("Child1"));
-    assert!(mermaid.contains("Child1 --> Child2"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("child1"));
+    assert!(mermaid.contains("child1 --> child2"));
     assert!(mermaid.contains("}"));
 }
 
@@ -155,8 +160,9 @@ fn state_diagram_with_concurrent() {
     let mermaid = diagram.to_mermaid();
 
     assert!(mermaid.contains("state \"Parallel Work\" as Parallel"));
-    assert!(mermaid.contains("A1"));
-    assert!(mermaid.contains("B1"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("a1"));
+    assert!(mermaid.contains("b1"));
     assert!(mermaid.contains("--")); // Region separator
 }
 
@@ -182,8 +188,9 @@ fn state_diagram_from_json() {
     let mermaid = diagram.to_mermaid();
 
     assert!(mermaid.contains("direction LR"));
-    assert!(mermaid.contains("[*] --> Pending"));
-    assert!(mermaid.contains("Pending --> Shipped: ship"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("[*] --> pending"));
+    assert!(mermaid.contains("pending --> shipped : ship"));
 }
 
 #[test]
@@ -215,9 +222,10 @@ transitions:
     let diagram = StateDiagram::from_yaml(yaml).unwrap();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("Red: Stop"));
-    assert!(mermaid.contains("Green: Go"));
-    assert!(mermaid.contains("Red --> Green: timer"));
+    // mermaid-py lowercases state IDs and uses "id : content" format
+    assert!(mermaid.contains("red : Stop"));
+    assert!(mermaid.contains("green : Go"));
+    assert!(mermaid.contains("red --> green : timer"));
 }
 
 #[test]
@@ -250,8 +258,9 @@ label = "toggle"
     let diagram = StateDiagram::from_toml(toml).unwrap();
     let mermaid = diagram.to_mermaid();
 
-    assert!(mermaid.contains("[*] --> Off"));
-    assert!(mermaid.contains("Off --> On: toggle"));
+    // mermaid-py lowercases state IDs
+    assert!(mermaid.contains("[*] --> off"));
+    assert!(mermaid.contains("off --> on : toggle"));
 }
 
 #[test]
@@ -274,12 +283,13 @@ fn state_diagram_build_script_includes_frontmatter() {
 
 #[test]
 fn transition_helpers() {
+    // mermaid-py lowercases state IDs
     let from_start = Transition::from_start("Init");
-    assert_eq!(from_start.to_mermaid(), "[*] --> Init");
+    assert_eq!(from_start.to_mermaid(), "[*] --> init");
 
     let to_end = Transition::to_end("Final");
-    assert_eq!(to_end.to_mermaid(), "Final --> [*]");
+    assert_eq!(to_end.to_mermaid(), "final --> [*]");
 
     let with_label = Transition::new("A", "B").with_label("event");
-    assert_eq!(with_label.to_mermaid(), "A --> B: event");
+    assert_eq!(with_label.to_mermaid(), "a --> b : event");
 }

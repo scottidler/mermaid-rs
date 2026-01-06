@@ -28,11 +28,8 @@ impl Task {
     }
 
     pub fn to_mermaid(&self) -> String {
-        if self.actors.is_empty() {
-            format!("        {}: {}\n", self.name, self.score)
-        } else {
-            format!("        {}: {}: {}\n", self.name, self.score, self.actors.join(", "))
-        }
+        // Match mermaid-py format: always include actors field (even if empty)
+        format!("\t\t{}: {} : {}\n", self.name, self.score, self.actors.join(", "))
     }
 }
 
@@ -44,14 +41,15 @@ mod tests {
     fn task_basic() {
         let task = Task::new("Sign up", 5);
         let mermaid = task.to_mermaid();
-        assert!(mermaid.contains("Sign up: 5"));
+        // Format: {name}: {score} : {actors} (actors empty)
+        assert!(mermaid.contains("Sign up: 5 : "));
     }
 
     #[test]
     fn task_with_actors() {
         let task = Task::new("Login", 4).with_actor("User");
         let mermaid = task.to_mermaid();
-        assert!(mermaid.contains("Login: 4: User"));
+        assert!(mermaid.contains("Login: 4 : User"));
     }
 
     #[test]

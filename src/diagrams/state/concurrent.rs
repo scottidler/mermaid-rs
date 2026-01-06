@@ -151,7 +151,8 @@ mod tests {
             );
 
         let mermaid = concurrent.to_mermaid();
-        assert!(mermaid.contains("[*] --> A"));
-        assert!(mermaid.contains("[*] --> B"));
+        // mermaid-py lowercases state IDs
+        assert!(mermaid.contains("[*] --> a"));
+        assert!(mermaid.contains("[*] --> b"));
     }
 }

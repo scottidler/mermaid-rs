@@ -74,15 +74,15 @@ impl Message {
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum MessageType {
+    Solid,  // ->
+    Dotted, // -->
     #[default]
-    Solid, // ->
-    Dotted,      // -->
-    SolidArrow,  // ->>
+    SolidArrow, // ->>
     DottedArrow, // -->>
-    SolidCross,  // -x
+    SolidCross, // -x
     DottedCross, // --x
-    SolidOpen,   // -)
-    DottedOpen,  // --)
+    SolidOpen, // -)
+    DottedOpen, // --)
 }
 
 impl MessageType {
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn message_basic() {
         let msg = Message::new("Alice", "Bob").with_text("Hello");
-        assert_eq!(msg.to_mermaid(), "Alice->Bob: Hello");
+        assert_eq!(msg.to_mermaid(), "Alice->>Bob: Hello");
     }
 
     #[test]

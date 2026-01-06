@@ -42,10 +42,12 @@ impl State {
     pub fn to_mermaid(&self) -> String {
         match self.state_type {
             StateType::Start | StateType::End => String::new(), // Start/End are rendered as transitions
-            StateType::Normal => match &self.description {
-                Some(desc) => format!("{}: {}", self.id, desc),
-                None => self.id.clone(),
-            },
+            StateType::Normal => {
+                // mermaid-py lowercases IDs and always outputs "id : content" format
+                let id = self.id.to_lowercase();
+                let content = self.description.as_ref().unwrap_or(&self.id);
+                format!("{} : {}", id, content)
+            }
         }
     }
 
@@ -71,13 +73,14 @@ mod tests {
     #[test]
     fn state_basic() {
         let state = State::new("Active");
-        assert_eq!(state.to_mermaid(), "Active");
+        // mermaid-py lowercases IDs and uses "id : content" format
+        assert_eq!(state.to_mermaid(), "active : Active");
     }
 
     #[test]
     fn state_with_description() {
         let state = State::new("Active").with_description("The active state");
-        assert_eq!(state.to_mermaid(), "Active: The active state");
+        assert_eq!(state.to_mermaid(), "active : The active state");
     }
 
     #[test]

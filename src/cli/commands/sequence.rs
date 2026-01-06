@@ -147,7 +147,7 @@ fn parse_participant_spec(spec: &str, is_actor: bool) -> Result<Participant, Mer
     }
 
     let id = parts[0].trim().to_string();
-    let participant = if is_actor { Participant::actor(&id) } else { Participant::new(&id) };
+    let participant = if is_actor { Participant::actor(&id) } else { Participant::non_actor(&id) };
 
     if parts.len() > 1 && !parts[1].is_empty() {
         Ok(participant.with_label(parts[1].trim()))

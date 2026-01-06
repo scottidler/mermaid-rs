@@ -8,8 +8,13 @@ pub struct Relationship {
     pub to_cardinality: Cardinality,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub label: Option<String>,
-    #[serde(default)]
+    /// mermaid-py: dotted=False by default, meaning identifying (solid --) is the default
+    #[serde(default = "default_identifying")]
     pub identifying: bool,
+}
+
+fn default_identifying() -> bool {
+    true
 }
 
 impl Relationship {
@@ -20,7 +25,7 @@ impl Relationship {
             from_cardinality: Cardinality::ExactlyOne,
             to_cardinality: Cardinality::ExactlyOne,
             label: None,
-            identifying: false,
+            identifying: true, // mermaid-py default
         }
     }
 
@@ -31,7 +36,7 @@ impl Relationship {
             from_cardinality: Cardinality::ExactlyOne,
             to_cardinality: Cardinality::ZeroOrMore,
             label: None,
-            identifying: false,
+            identifying: true, // mermaid-py default
         }
     }
 
@@ -42,7 +47,7 @@ impl Relationship {
             from_cardinality: Cardinality::ZeroOrMore,
             to_cardinality: Cardinality::ExactlyOne,
             label: None,
-            identifying: false,
+            identifying: true, // mermaid-py default
         }
     }
 
@@ -53,7 +58,7 @@ impl Relationship {
             from_cardinality: Cardinality::ZeroOrMore,
             to_cardinality: Cardinality::ZeroOrMore,
             label: None,
-            identifying: false,
+            identifying: true, // mermaid-py default
         }
     }
 
@@ -76,14 +81,13 @@ impl Relationship {
     pub fn to_mermaid(&self) -> String {
         let from_sym = self.from_cardinality.symbol_left();
         let to_sym = self.to_cardinality.symbol_right();
+        // mermaid-py: identifying = solid (--), non-identifying = dotted (..)
         let line = if self.identifying { "--" } else { ".." };
 
+        // Format: {from}{left_sym}{line}{right_sym}{to} : "{label}"
         match &self.label {
-            Some(label) => format!(
-                "    {} {}{}{}{}|{}| : {}\n",
-                self.from, from_sym, line, to_sym, "{}", label, label
-            ),
-            None => format!("    {} {}{}{} {}\n", self.from, from_sym, line, to_sym, self.to),
+            Some(label) => format!("{}{}{}{}{} : \"{}\"", self.from, from_sym, line, to_sym, self.to, label),
+            None => format!("{}{}{}{}{}", self.from, from_sym, line, to_sym, self.to),
         }
     }
 }

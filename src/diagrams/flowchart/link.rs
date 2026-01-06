@@ -49,9 +49,12 @@ impl Link {
     /// Renders the link in mermaid syntax
     pub fn to_mermaid(&self) -> String {
         let arrow = self.style.arrow_syntax(&self.tail, &self.head);
+        // mermaid-py lowercases node IDs
+        let from = self.from.to_lowercase();
+        let to = self.to.to_lowercase();
         match &self.label {
-            Some(label) => format!("{} {}|{}| {}", self.from, arrow, label, self.to),
-            None => format!("{} {} {}", self.from, arrow, self.to),
+            Some(label) => format!("{} {}|{}| {}", from, arrow, label, to),
+            None => format!("{} {} {}", from, arrow, to),
         }
     }
 }
@@ -139,31 +142,32 @@ mod tests {
     #[test]
     fn link_default_arrow() {
         let link = Link::new("A", "B");
-        assert_eq!(link.to_mermaid(), "A --> B");
+        // mermaid-py lowercases IDs
+        assert_eq!(link.to_mermaid(), "a --> b");
     }
 
     #[test]
     fn link_with_label() {
         let link = Link::new("A", "B").with_label("connects");
-        assert_eq!(link.to_mermaid(), "A -->|connects| B");
+        assert_eq!(link.to_mermaid(), "a -->|connects| b");
     }
 
     #[test]
     fn link_dotted() {
         let link = Link::new("A", "B").with_style(LinkStyle::Dotted);
-        assert_eq!(link.to_mermaid(), "A -.-> B");
+        assert_eq!(link.to_mermaid(), "a -.-> b");
     }
 
     #[test]
     fn link_thick() {
         let link = Link::new("A", "B").with_style(LinkStyle::Thick);
-        assert_eq!(link.to_mermaid(), "A ==> B");
+        assert_eq!(link.to_mermaid(), "a ==> b");
     }
 
     #[test]
     fn link_invisible() {
         let link = Link::new("A", "B").with_style(LinkStyle::Invisible);
-        assert_eq!(link.to_mermaid(), "A ~~~ B");
+        assert_eq!(link.to_mermaid(), "a ~~~ b");
     }
 
     #[test]

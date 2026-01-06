@@ -197,12 +197,12 @@ impl SequenceDiagramBuilder {
     }
 
     pub fn participant_simple(mut self, id: impl Into<String>) -> Self {
-        self.participants.push(Participant::new(id));
+        self.participants.push(Participant::non_actor(id));
         self
     }
 
     pub fn participant_with_label(mut self, id: impl Into<String>, label: impl Into<String>) -> Self {
-        self.participants.push(Participant::new(id).with_label(label));
+        self.participants.push(Participant::non_actor(id).with_label(label));
         self
     }
 
@@ -304,7 +304,8 @@ mod tests {
         assert!(mermaid.contains("sequenceDiagram"));
         assert!(mermaid.contains("actor User"));
         assert!(mermaid.contains("participant Server"));
-        assert!(mermaid.contains("User->Server: Request"));
+        // mermaid-py defaults to SolidArrow (->>)
+        assert!(mermaid.contains("User->>Server: Request"));
         assert!(mermaid.contains("Server-->>User: Response"));
     }
 

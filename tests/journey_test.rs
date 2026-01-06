@@ -44,7 +44,8 @@ fn journey_task_with_actors() {
         .task_with_actors("Sign up", 5, vec!["User".to_string(), "System".to_string()])
         .build();
     let mermaid = journey.to_mermaid();
-    assert!(mermaid.contains("Sign up: 5: User, System"));
+    // mermaid-py format: {name}: {score} : {actors}
+    assert!(mermaid.contains("Sign up: 5 : User, System"));
 }
 
 #[test]
