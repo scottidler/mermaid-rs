@@ -1,4 +1,5 @@
-use clap::Parser;
+use clap::{CommandFactory, Parser};
+use clap_complete::generate;
 use mermaid_rs::cli::{Cli, Commands};
 use mermaid_rs::core::MermaidError;
 
@@ -10,6 +11,11 @@ async fn main() -> Result<(), MermaidError> {
     let cli = Cli::parse();
 
     match cli.command {
+        Commands::Completions(args) => {
+            let mut cmd = Cli::command();
+            generate(args.shell, &mut cmd, "mermaid", &mut std::io::stdout());
+            Ok(())
+        }
         Commands::ER(args) => mermaid_rs::cli::commands::er::run(args, &cli.global).await,
         Commands::Flowchart(args) => mermaid_rs::cli::commands::flowchart::run(args, &cli.global).await,
         Commands::Journey(args) => mermaid_rs::cli::commands::journey::run(args, &cli.global).await,

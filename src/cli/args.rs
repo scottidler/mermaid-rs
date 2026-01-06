@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand, ValueEnum};
+use clap_complete::Shell;
 use std::path::PathBuf;
 
 use super::commands;
@@ -95,6 +96,9 @@ impl OutputFormat {
 
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Generate shell completions
+    Completions(CompletionsArgs),
+
     /// Generate an ER (entity-relationship) diagram
     #[command(name = "er")]
     ER(commands::er::ERArgs),
@@ -122,6 +126,13 @@ pub enum Commands {
 
     /// Generate a state diagram
     State(commands::state::StateArgs),
+}
+
+#[derive(Parser, Debug)]
+pub struct CompletionsArgs {
+    /// Shell to generate completions for
+    #[arg(value_enum)]
+    pub shell: Shell,
 }
 
 /// Common input options for diagram subcommands
