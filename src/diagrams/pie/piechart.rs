@@ -23,7 +23,7 @@ pub struct PieChart {
     pub title: Option<String>,
     #[serde(default)]
     pub show_data: bool,
-    #[serde(default)]
+    #[serde(default, alias = "slices")]
     pub data: Vec<PieData>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub config: Option<Config>,
@@ -249,6 +249,27 @@ data:
         let raw = "pie\n\t\"A\" : 50\n\t\"B\" : 50";
         let chart = PieChart::from_raw_mermaid(raw.to_string());
         assert_eq!(chart.to_mermaid(), raw);
+    }
+
+    #[test]
+    fn pie_chart_from_yaml_with_slices_alias() {
+        // "slices" should work as an alias for "data"
+        let yaml = r#"
+title: Test Chart
+show_data: true
+slices:
+  - label: A
+    value: 30
+  - label: B
+    value: 70
+"#;
+
+        let chart = PieChart::from_yaml(yaml).unwrap();
+        assert_eq!(chart.title, Some("Test Chart".to_string()));
+        assert!(chart.show_data);
+        assert_eq!(chart.data.len(), 2);
+        assert_eq!(chart.data[0].label, "A");
+        assert_eq!(chart.data[1].label, "B");
     }
 
     #[test]
