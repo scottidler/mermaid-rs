@@ -1,7 +1,9 @@
 mod common;
 
 use mermaid_rs::core::Diagram;
-use mermaid_rs::diagrams::er::{Attribute, AttributeKey, AttributeType, Cardinality, ERDiagram, Entity};
+use mermaid_rs::diagrams::er::{
+    Attribute, AttributeKey, AttributeType, Cardinality, ERDiagram, Entity,
+};
 
 #[test]
 fn er_diagram_empty() {
@@ -22,7 +24,9 @@ fn er_diagram_with_entity_attributes() {
     let diagram = ERDiagram::builder()
         .entity(
             Entity::new("User")
-                .with_attribute(Attribute::new(AttributeType::Int, "id").with_key(AttributeKey::PrimaryKey))
+                .with_attribute(
+                    Attribute::new(AttributeType::Int, "id").with_key(AttributeKey::PrimaryKey),
+                )
                 .with_attribute(Attribute::new(AttributeType::String, "name"))
                 .with_attribute(Attribute::new(AttributeType::String, "email")),
         )

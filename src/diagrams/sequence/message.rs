@@ -145,7 +145,10 @@ mod tests {
     #[test]
     fn message_type_parse() {
         assert_eq!(MessageType::parse("solid"), Some(MessageType::Solid));
-        assert_eq!(MessageType::parse("solid-arrow"), Some(MessageType::SolidArrow));
+        assert_eq!(
+            MessageType::parse("solid-arrow"),
+            Some(MessageType::SolidArrow)
+        );
         assert_eq!(MessageType::parse("invalid"), None);
     }
 }

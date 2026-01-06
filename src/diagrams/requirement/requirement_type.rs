@@ -168,14 +168,23 @@ mod tests {
     #[test]
     fn verify_method_parse() {
         assert_eq!(VerifyMethod::parse("test"), Some(VerifyMethod::Test));
-        assert_eq!(VerifyMethod::parse("inspection"), Some(VerifyMethod::Inspection));
+        assert_eq!(
+            VerifyMethod::parse("inspection"),
+            Some(VerifyMethod::Inspection)
+        );
         assert_eq!(VerifyMethod::parse("invalid"), None);
     }
 
     #[test]
     fn relationship_type_parse() {
-        assert_eq!(RelationshipType::parse("contains"), Some(RelationshipType::Contains));
-        assert_eq!(RelationshipType::parse("verifies"), Some(RelationshipType::Verifies));
+        assert_eq!(
+            RelationshipType::parse("contains"),
+            Some(RelationshipType::Contains)
+        );
+        assert_eq!(
+            RelationshipType::parse("verifies"),
+            Some(RelationshipType::Verifies)
+        );
         assert_eq!(RelationshipType::parse("invalid"), None);
     }
 }

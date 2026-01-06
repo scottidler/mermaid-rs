@@ -197,7 +197,10 @@ fn flowchart_diagram_type() {
 
 #[test]
 fn flowchart_build_script_includes_frontmatter() {
-    let chart = FlowChart::builder().title("My Flow").node_simple("A", "Test").build();
+    let chart = FlowChart::builder()
+        .title("My Flow")
+        .node_simple("A", "Test")
+        .build();
 
     let script = chart.build_script();
     assert!(script.contains("---"));

@@ -19,7 +19,10 @@ fn mindmap_with_title() {
 
 #[test]
 fn mindmap_with_children() {
-    let mindmap = Mindmap::builder("Root").child("Child 1").child("Child 2").build();
+    let mindmap = Mindmap::builder("Root")
+        .child("Child 1")
+        .child("Child 2")
+        .build();
     let mermaid = mindmap.to_mermaid();
     assert!(mermaid.contains("Root"));
     assert!(mermaid.contains("Child 1"));
@@ -176,7 +179,9 @@ fn mindmap_node_with_class() {
 
 #[test]
 fn mindmap_root_with_shape() {
-    let mindmap = Mindmap::builder("Root").root_shape(MindmapNodeShape::Hexagon).build();
+    let mindmap = Mindmap::builder("Root")
+        .root_shape(MindmapNodeShape::Hexagon)
+        .build();
     let mermaid = mindmap.to_mermaid();
     assert!(mermaid.contains("{{Root}}"));
 }

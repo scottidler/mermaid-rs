@@ -186,7 +186,12 @@ impl FlowChartBuilder {
         self
     }
 
-    pub fn node_with_shape(mut self, id: impl Into<String>, label: impl Into<String>, shape: NodeShape) -> Self {
+    pub fn node_with_shape(
+        mut self,
+        id: impl Into<String>,
+        label: impl Into<String>,
+        shape: NodeShape,
+    ) -> Self {
         self.nodes.push(Node::new(id, label, shape));
         self
     }
@@ -201,12 +206,22 @@ impl FlowChartBuilder {
         self
     }
 
-    pub fn link_with_label(mut self, from: impl Into<String>, to: impl Into<String>, label: impl Into<String>) -> Self {
+    pub fn link_with_label(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+        label: impl Into<String>,
+    ) -> Self {
         self.links.push(Link::new(from, to).with_label(label));
         self
     }
 
-    pub fn link_with_style(mut self, from: impl Into<String>, to: impl Into<String>, style: LinkStyle) -> Self {
+    pub fn link_with_style(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+        style: LinkStyle,
+    ) -> Self {
         self.links.push(Link::new(from, to).with_style(style));
         self
     }

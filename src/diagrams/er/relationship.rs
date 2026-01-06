@@ -86,7 +86,10 @@ impl Relationship {
 
         // Format: {from}{left_sym}{line}{right_sym}{to} : "{label}"
         match &self.label {
-            Some(label) => format!("{}{}{}{}{} : \"{}\"", self.from, from_sym, line, to_sym, self.to, label),
+            Some(label) => format!(
+                "{}{}{}{}{} : \"{}\"",
+                self.from, from_sym, line, to_sym, self.to, label
+            ),
             None => format!("{}{}{}{}{}", self.from, from_sym, line, to_sym, self.to),
         }
     }

@@ -127,7 +127,12 @@ impl ERDiagramBuilder {
         self
     }
 
-    pub fn one_to_many(mut self, from: impl Into<String>, to: impl Into<String>, label: Option<&str>) -> Self {
+    pub fn one_to_many(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+        label: Option<&str>,
+    ) -> Self {
         let mut rel = Relationship::one_to_many(from, to);
         if let Some(l) = label {
             rel = rel.with_label(l);
@@ -136,7 +141,12 @@ impl ERDiagramBuilder {
         self
     }
 
-    pub fn many_to_one(mut self, from: impl Into<String>, to: impl Into<String>, label: Option<&str>) -> Self {
+    pub fn many_to_one(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+        label: Option<&str>,
+    ) -> Self {
         let mut rel = Relationship::many_to_one(from, to);
         if let Some(l) = label {
             rel = rel.with_label(l);
@@ -145,7 +155,12 @@ impl ERDiagramBuilder {
         self
     }
 
-    pub fn many_to_many(mut self, from: impl Into<String>, to: impl Into<String>, label: Option<&str>) -> Self {
+    pub fn many_to_many(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+        label: Option<&str>,
+    ) -> Self {
         let mut rel = Relationship::many_to_many(from, to);
         if let Some(l) = label {
             rel = rel.with_label(l);

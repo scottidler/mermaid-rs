@@ -57,7 +57,8 @@ impl OutputHandler {
                     println!("{}", content);
                 }
                 OutputTarget::Clipboard => {
-                    let mut clipboard = Clipboard::new().map_err(|e| MermaidError::ClipboardError(e.to_string()))?;
+                    let mut clipboard = Clipboard::new()
+                        .map_err(|e| MermaidError::ClipboardError(e.to_string()))?;
                     clipboard
                         .set_text(content)
                         .map_err(|e| MermaidError::ClipboardError(e.to_string()))?;
@@ -108,7 +109,8 @@ impl OutputHandler {
                     println!("{}", content);
                 }
                 OutputTarget::Clipboard => {
-                    let mut clipboard = Clipboard::new().map_err(|e| MermaidError::ClipboardError(e.to_string()))?;
+                    let mut clipboard = Clipboard::new()
+                        .map_err(|e| MermaidError::ClipboardError(e.to_string()))?;
                     clipboard
                         .set_text(content)
                         .map_err(|e| MermaidError::ClipboardError(e.to_string()))?;

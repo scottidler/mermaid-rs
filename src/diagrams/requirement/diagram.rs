@@ -108,7 +108,12 @@ impl RequirementDiagramBuilder {
         self
     }
 
-    pub fn requirement_simple(mut self, id: impl Into<String>, name: impl Into<String>, text: Option<&str>) -> Self {
+    pub fn requirement_simple(
+        mut self,
+        id: impl Into<String>,
+        name: impl Into<String>,
+        text: Option<&str>,
+    ) -> Self {
         let mut req = Requirement::new(id, name);
         if let Some(t) = text {
             req = req.with_text(t);
@@ -125,7 +130,9 @@ impl RequirementDiagramBuilder {
         risk: Risk,
         verify: VerifyMethod,
     ) -> Self {
-        let mut req = Requirement::new(id, name).with_risk(risk).with_verify_method(verify);
+        let mut req = Requirement::new(id, name)
+            .with_risk(risk)
+            .with_verify_method(verify);
         if let Some(t) = text {
             req = req.with_text(t);
         }
@@ -155,12 +162,14 @@ impl RequirementDiagramBuilder {
     }
 
     pub fn verifies(mut self, element: impl Into<String>, requirement: impl Into<String>) -> Self {
-        self.relationships.push(ReqRelationship::verifies(element, requirement));
+        self.relationships
+            .push(ReqRelationship::verifies(element, requirement));
         self
     }
 
     pub fn derives(mut self, source: impl Into<String>, target: impl Into<String>) -> Self {
-        self.relationships.push(ReqRelationship::derives(source, target));
+        self.relationships
+            .push(ReqRelationship::derives(source, target));
         self
     }
 

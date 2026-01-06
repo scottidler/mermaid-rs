@@ -169,7 +169,9 @@ mod tests {
     #[test]
     fn entity_with_attributes() {
         let entity = Entity::new("User")
-            .with_attribute(Attribute::new(AttributeType::Int, "id").with_key(AttributeKey::PrimaryKey))
+            .with_attribute(
+                Attribute::new(AttributeType::Int, "id").with_key(AttributeKey::PrimaryKey),
+            )
             .with_attribute(Attribute::new(AttributeType::String, "name"));
 
         let mermaid = entity.to_mermaid();

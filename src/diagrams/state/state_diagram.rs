@@ -199,8 +199,13 @@ impl StateDiagramBuilder {
         self
     }
 
-    pub fn state_with_description(mut self, id: impl Into<String>, description: impl Into<String>) -> Self {
-        self.states.push(State::new(id).with_description(description));
+    pub fn state_with_description(
+        mut self,
+        id: impl Into<String>,
+        description: impl Into<String>,
+    ) -> Self {
+        self.states
+            .push(State::new(id).with_description(description));
         self
     }
 
@@ -220,7 +225,8 @@ impl StateDiagramBuilder {
         to: impl Into<String>,
         label: impl Into<String>,
     ) -> Self {
-        self.transitions.push(Transition::new(from, to).with_label(label));
+        self.transitions
+            .push(Transition::new(from, to).with_label(label));
         self
     }
 

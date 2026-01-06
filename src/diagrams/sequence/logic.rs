@@ -70,7 +70,11 @@ impl Logic {
         self
     }
 
-    pub fn with_else_condition(mut self, condition: impl Into<String>, messages: Vec<Message>) -> Self {
+    pub fn with_else_condition(
+        mut self,
+        condition: impl Into<String>,
+        messages: Vec<Message>,
+    ) -> Self {
         self.else_blocks.push(ElseBlock {
             condition: Some(condition.into()),
             messages,
@@ -161,7 +165,8 @@ mod tests {
 
     #[test]
     fn logic_loop() {
-        let logic = Logic::loop_block("Every minute").with_message(Message::new("Server", "Client").with_text("ping"));
+        let logic = Logic::loop_block("Every minute")
+            .with_message(Message::new("Server", "Client").with_text("ping"));
 
         let mermaid = logic.to_mermaid();
         assert!(mermaid.contains("loop Every minute"));
@@ -172,7 +177,8 @@ mod tests {
 
     #[test]
     fn logic_opt() {
-        let logic = Logic::opt("Has cache").with_message(Message::new("Client", "Cache").with_text("get"));
+        let logic =
+            Logic::opt("Has cache").with_message(Message::new("Client", "Cache").with_text("get"));
 
         let mermaid = logic.to_mermaid();
         assert!(mermaid.contains("opt Has cache"));

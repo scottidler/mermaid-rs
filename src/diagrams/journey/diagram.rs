@@ -113,9 +113,16 @@ impl JourneyBuilder {
     }
 
     /// Add a task with actors to the current section
-    pub fn task_with_actors(mut self, name: impl Into<String>, score: u8, actors: Vec<String>) -> Self {
+    pub fn task_with_actors(
+        mut self,
+        name: impl Into<String>,
+        score: u8,
+        actors: Vec<String>,
+    ) -> Self {
         if let Some(section) = &mut self.current_section {
-            section.tasks.push(Task::new(name, score).with_actors(actors));
+            section
+                .tasks
+                .push(Task::new(name, score).with_actors(actors));
         }
         self
     }

@@ -41,7 +41,12 @@ pub async fn run(args: FlowchartArgs, global: &GlobalOptions) -> Result<(), Merm
         background_color: None,
     };
 
-    let output_handler = OutputHandler::new(global.output.clone(), global.stdout, global.clipboard, global.open);
+    let output_handler = OutputHandler::new(
+        global.output.clone(),
+        global.stdout,
+        global.clipboard,
+        global.open,
+    );
 
     if matches!(global.format, OutputFormat::Mermaid) {
         let script = chart.build_script();
@@ -69,7 +74,10 @@ pub async fn run(args: FlowchartArgs, global: &GlobalOptions) -> Result<(), Merm
 async fn build_chart(args: &FlowchartArgs) -> Result<FlowChart, MermaidError> {
     if let Some(path) = &args.input.input {
         let content = tokio::fs::read_to_string(path).await?;
-        let ext = path.extension().and_then(std::ffi::OsStr::to_str).unwrap_or("yaml");
+        let ext = path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .unwrap_or("yaml");
         return parse_chart(&content, ext);
     }
 
@@ -77,7 +85,11 @@ async fn build_chart(args: &FlowchartArgs) -> Result<FlowChart, MermaidError> {
         use tokio::io::AsyncReadExt;
         let mut buffer = String::new();
         tokio::io::stdin().read_to_string(&mut buffer).await?;
-        let ext = if buffer.trim_start().starts_with('{') { "json" } else { "yaml" };
+        let ext = if buffer.trim_start().starts_with('{') {
+            "json"
+        } else {
+            "yaml"
+        };
         return parse_chart(&buffer, ext);
     }
 
@@ -128,7 +140,10 @@ fn parse_chart(content: &str, format: &str) -> Result<FlowChart, MermaidError> {
         "json" => FlowChart::from_json(content),
         "yaml" | "yml" => FlowChart::from_yaml(content),
         "toml" => FlowChart::from_toml(content),
-        _ => Err(MermaidError::InvalidInput(format!("Unsupported format: {}", format))),
+        _ => Err(MermaidError::InvalidInput(format!(
+            "Unsupported format: {}",
+            format
+        ))),
     }
 }
 
@@ -142,7 +157,11 @@ fn parse_node_spec(spec: &str) -> Result<Node, MermaidError> {
     }
 
     let id = parts[0].trim().to_string();
-    let label = if parts.len() > 1 { parts[1].trim().to_string() } else { id.clone() };
+    let label = if parts.len() > 1 {
+        parts[1].trim().to_string()
+    } else {
+        id.clone()
+    };
     let shape = if parts.len() > 2 {
         NodeShape::parse(parts[2].trim()).unwrap_or_default()
     } else {
@@ -155,7 +174,10 @@ fn parse_node_spec(spec: &str) -> Result<Node, MermaidError> {
 fn parse_link_spec(spec: &str) -> Result<Link, MermaidError> {
     // Format: "from->to:style:label"
     let arrow_pos = spec.find("->").ok_or_else(|| {
-        MermaidError::InvalidInput(format!("Invalid link spec '{}'. Expected '->' between nodes", spec))
+        MermaidError::InvalidInput(format!(
+            "Invalid link spec '{}'. Expected '->' between nodes",
+            spec
+        ))
     })?;
 
     let from = spec[..arrow_pos].trim().to_string();

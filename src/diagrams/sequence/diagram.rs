@@ -192,7 +192,8 @@ impl SequenceDiagramBuilder {
     }
 
     pub fn actor_with_label(mut self, id: impl Into<String>, label: impl Into<String>) -> Self {
-        self.participants.push(Participant::actor(id).with_label(label));
+        self.participants
+            .push(Participant::actor(id).with_label(label));
         self
     }
 
@@ -201,8 +202,13 @@ impl SequenceDiagramBuilder {
         self
     }
 
-    pub fn participant_with_label(mut self, id: impl Into<String>, label: impl Into<String>) -> Self {
-        self.participants.push(Participant::non_actor(id).with_label(label));
+    pub fn participant_with_label(
+        mut self,
+        id: impl Into<String>,
+        label: impl Into<String>,
+    ) -> Self {
+        self.participants
+            .push(Participant::non_actor(id).with_label(label));
         self
     }
 
@@ -216,7 +222,12 @@ impl SequenceDiagramBuilder {
         self
     }
 
-    pub fn message_simple(mut self, from: impl Into<String>, to: impl Into<String>, text: impl Into<String>) -> Self {
+    pub fn message_simple(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+        text: impl Into<String>,
+    ) -> Self {
         self.messages.push(Message::new(from, to).with_text(text));
         self
     }
@@ -228,8 +239,11 @@ impl SequenceDiagramBuilder {
         message_type: MessageType,
         text: impl Into<String>,
     ) -> Self {
-        self.messages
-            .push(Message::new(from, to).with_type(message_type).with_text(text));
+        self.messages.push(
+            Message::new(from, to)
+                .with_type(message_type)
+                .with_text(text),
+        );
         self
     }
 
@@ -239,20 +253,29 @@ impl SequenceDiagramBuilder {
     }
 
     pub fn note_over(mut self, participant: impl Into<String>, text: impl Into<String>) -> Self {
-        self.notes
-            .push(Note::over_participant(NotePosition::Over, participant, text));
+        self.notes.push(Note::over_participant(
+            NotePosition::Over,
+            participant,
+            text,
+        ));
         self
     }
 
     pub fn note_left(mut self, participant: impl Into<String>, text: impl Into<String>) -> Self {
-        self.notes
-            .push(Note::over_participant(NotePosition::Left, participant, text));
+        self.notes.push(Note::over_participant(
+            NotePosition::Left,
+            participant,
+            text,
+        ));
         self
     }
 
     pub fn note_right(mut self, participant: impl Into<String>, text: impl Into<String>) -> Self {
-        self.notes
-            .push(Note::over_participant(NotePosition::Right, participant, text));
+        self.notes.push(Note::over_participant(
+            NotePosition::Right,
+            participant,
+            text,
+        ));
         self
     }
 
@@ -361,7 +384,10 @@ mod tests {
             .logic(
                 Logic::alt("Success")
                     .with_message(Message::new("A", "B").with_text("OK"))
-                    .with_else_condition("Failure", vec![Message::new("A", "B").with_text("Error")]),
+                    .with_else_condition(
+                        "Failure",
+                        vec![Message::new("A", "B").with_text("Error")],
+                    ),
             )
             .build();
 

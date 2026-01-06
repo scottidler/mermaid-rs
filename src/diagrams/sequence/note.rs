@@ -16,7 +16,11 @@ impl Note {
         }
     }
 
-    pub fn over_participant(position: NotePosition, participant: impl Into<String>, text: impl Into<String>) -> Self {
+    pub fn over_participant(
+        position: NotePosition,
+        participant: impl Into<String>,
+        text: impl Into<String>,
+    ) -> Self {
         Self {
             position,
             over: vec![participant.into()],
@@ -24,7 +28,11 @@ impl Note {
         }
     }
 
-    pub fn over_participants(position: NotePosition, participants: Vec<String>, text: impl Into<String>) -> Self {
+    pub fn over_participants(
+        position: NotePosition,
+        participants: Vec<String>,
+        text: impl Into<String>,
+    ) -> Self {
         Self {
             position,
             over: participants,

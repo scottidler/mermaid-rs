@@ -40,8 +40,16 @@ impl Transition {
 
     pub fn to_mermaid(&self) -> String {
         // mermaid-py lowercases state IDs (but not [*])
-        let from = if self.from == "[*]" { self.from.clone() } else { self.from.to_lowercase() };
-        let to = if self.to == "[*]" { self.to.clone() } else { self.to.to_lowercase() };
+        let from = if self.from == "[*]" {
+            self.from.clone()
+        } else {
+            self.from.to_lowercase()
+        };
+        let to = if self.to == "[*]" {
+            self.to.clone()
+        } else {
+            self.to.to_lowercase()
+        };
         match &self.label {
             Some(label) => format!("{} --> {} : {}", from, to, label),
             None => format!("{} --> {}", from, to),
@@ -69,7 +77,11 @@ impl Choice {
         }
     }
 
-    pub fn with_condition(mut self, condition: impl Into<String>, target: impl Into<String>) -> Self {
+    pub fn with_condition(
+        mut self,
+        condition: impl Into<String>,
+        target: impl Into<String>,
+    ) -> Self {
         self.conditions.push(ChoiceCondition {
             condition: condition.into(),
             target: target.into(),
@@ -80,7 +92,10 @@ impl Choice {
     pub fn to_mermaid(&self) -> String {
         let mut output = format!("state {} <<choice>>\n", self.id);
         for cond in &self.conditions {
-            output.push_str(&format!("    {} --> {}: {}\n", self.id, cond.target, cond.condition));
+            output.push_str(&format!(
+                "    {} --> {}: {}\n",
+                self.id, cond.target, cond.condition
+            ));
         }
         output
     }

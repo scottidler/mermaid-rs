@@ -92,7 +92,9 @@ async fn render_from_raw_script() {
     let client = MermaidClient::new(Some(mock_server.uri()));
     let script = "pie title Test\n    \"A\" : 50\n    \"B\" : 50";
 
-    let result = client.render_svg_from_script(script, &RenderOptions::default()).await;
+    let result = client
+        .render_svg_from_script(script, &RenderOptions::default())
+        .await;
     assert!(result.is_ok());
 }
 

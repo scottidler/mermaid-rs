@@ -43,7 +43,11 @@ impl CompositeState {
         self
     }
 
-    pub fn with_transition_simple(mut self, from: impl Into<String>, to: impl Into<String>) -> Self {
+    pub fn with_transition_simple(
+        mut self,
+        from: impl Into<String>,
+        to: impl Into<String>,
+    ) -> Self {
         self.transitions.push(Transition::new(from, to));
         self
     }

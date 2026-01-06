@@ -56,7 +56,8 @@ fn cli_render_help() {
 #[test]
 fn cli_pie_mermaid_output() {
     let output = run_cli(&[
-        "pie", "--data", "A:50", "--data", "B:50", "--title", "Test", "--format", "mermaid", "--stdout",
+        "pie", "--data", "A:50", "--data", "B:50", "--title", "Test", "--format", "mermaid",
+        "--stdout",
     ]);
 
     let stdout = String::from_utf8_lossy(&output.stdout);
@@ -106,7 +107,9 @@ fn cli_render_mermaid_passthrough() {
 
 #[test]
 fn cli_invalid_data_spec() {
-    let output = run_cli(&["pie", "--data", "invalid", "--format", "mermaid", "--stdout"]);
+    let output = run_cli(&[
+        "pie", "--data", "invalid", "--format", "mermaid", "--stdout",
+    ]);
 
     assert!(!output.status.success());
     let stderr = String::from_utf8_lossy(&output.stderr);

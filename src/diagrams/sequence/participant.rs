@@ -132,6 +132,8 @@ mod tests {
         let b = ParticipantBox::new("Frontend")
             .with_color("rgb(200,220,255)")
             .with_members(vec!["Client".to_string()]);
-        assert!(b.to_mermaid_start().contains("box rgb(200,220,255) Frontend"));
+        assert!(b
+            .to_mermaid_start()
+            .contains("box rgb(200,220,255) Frontend"));
     }
 }

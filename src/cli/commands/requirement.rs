@@ -2,7 +2,9 @@ use clap::Parser;
 
 use crate::cli::{GlobalOptions, InputOptions, OutputFormat, OutputHandler};
 use crate::core::{Diagram, MermaidError};
-use crate::diagrams::requirement::{Element, ReqRelationship, Requirement, RequirementDiagram, Risk, VerifyMethod};
+use crate::diagrams::requirement::{
+    Element, ReqRelationship, Requirement, RequirementDiagram, Risk, VerifyMethod,
+};
 use crate::render::{MermaidClient, RenderOptions};
 
 #[derive(Parser, Debug)]
@@ -37,7 +39,12 @@ pub async fn run(args: RequirementArgs, global: &GlobalOptions) -> Result<(), Me
         background_color: None,
     };
 
-    let output_handler = OutputHandler::new(global.output.clone(), global.stdout, global.clipboard, global.open);
+    let output_handler = OutputHandler::new(
+        global.output.clone(),
+        global.stdout,
+        global.clipboard,
+        global.open,
+    );
 
     if matches!(global.format, OutputFormat::Mermaid) {
         let script = diagram.build_script();
@@ -65,7 +72,10 @@ pub async fn run(args: RequirementArgs, global: &GlobalOptions) -> Result<(), Me
 async fn build_diagram(args: &RequirementArgs) -> Result<RequirementDiagram, MermaidError> {
     if let Some(path) = &args.input.input {
         let content = tokio::fs::read_to_string(path).await?;
-        let ext = path.extension().and_then(std::ffi::OsStr::to_str).unwrap_or("yaml");
+        let ext = path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .unwrap_or("yaml");
         return parse_diagram(&content, ext);
     }
 
@@ -73,12 +83,18 @@ async fn build_diagram(args: &RequirementArgs) -> Result<RequirementDiagram, Mer
         use tokio::io::AsyncReadExt;
         let mut buffer = String::new();
         tokio::io::stdin().read_to_string(&mut buffer).await?;
-        let ext = if buffer.trim_start().starts_with('{') { "json" } else { "yaml" };
+        let ext = if buffer.trim_start().starts_with('{') {
+            "json"
+        } else {
+            "yaml"
+        };
         return parse_diagram(&buffer, ext);
     }
 
     if let Some(mermaid_str) = &args.input.mermaid {
-        return Ok(RequirementDiagram::from_raw_mermaid(mermaid_str.to_string()));
+        return Ok(RequirementDiagram::from_raw_mermaid(
+            mermaid_str.to_string(),
+        ));
     }
 
     // Build from CLI arguments
@@ -114,7 +130,10 @@ fn parse_diagram(content: &str, format: &str) -> Result<RequirementDiagram, Merm
         "json" => RequirementDiagram::from_json(content),
         "yaml" | "yml" => RequirementDiagram::from_yaml(content),
         "toml" => RequirementDiagram::from_toml(content),
-        _ => Err(MermaidError::InvalidInput(format!("Unsupported format: {}", format))),
+        _ => Err(MermaidError::InvalidInput(format!(
+            "Unsupported format: {}",
+            format
+        ))),
     }
 }
 
@@ -184,7 +203,11 @@ fn parse_relationship_spec(spec: &str) -> Result<ReqRelationship, MermaidError> 
     }
 
     let to = parts[0].trim().to_string();
-    let rel_type = if parts.len() > 1 { parts[1].trim() } else { "satisfies" };
+    let rel_type = if parts.len() > 1 {
+        parts[1].trim()
+    } else {
+        "satisfies"
+    };
 
     let rel = match rel_type.to_lowercase().as_str() {
         "satisfies" => ReqRelationship::satisfies(from, to),

@@ -45,7 +45,8 @@ impl RenderOptions {
 impl MermaidClient {
     pub fn new(server: Option<String>) -> Self {
         let server = server.unwrap_or_else(|| {
-            std::env::var("MERMAID_INK_SERVER").unwrap_or_else(|_| "https://mermaid.ink".to_string())
+            std::env::var("MERMAID_INK_SERVER")
+                .unwrap_or_else(|_| "https://mermaid.ink".to_string())
         });
 
         Self {
@@ -58,12 +59,20 @@ impl MermaidClient {
         &self.server
     }
 
-    pub async fn render_svg(&self, diagram: &dyn Diagram, options: &RenderOptions) -> Result<String, MermaidError> {
+    pub async fn render_svg(
+        &self,
+        diagram: &dyn Diagram,
+        options: &RenderOptions,
+    ) -> Result<String, MermaidError> {
         let script = diagram.build_script();
         self.render_svg_from_script(&script, options).await
     }
 
-    pub async fn render_svg_from_script(&self, script: &str, options: &RenderOptions) -> Result<String, MermaidError> {
+    pub async fn render_svg_from_script(
+        &self,
+        script: &str,
+        options: &RenderOptions,
+    ) -> Result<String, MermaidError> {
         let encoded = encode_diagram(script);
         let url = self.build_url("svg", &encoded, options);
 
@@ -79,12 +88,20 @@ impl MermaidClient {
         Ok(response.text().await?)
     }
 
-    pub async fn render_png(&self, diagram: &dyn Diagram, options: &RenderOptions) -> Result<Vec<u8>, MermaidError> {
+    pub async fn render_png(
+        &self,
+        diagram: &dyn Diagram,
+        options: &RenderOptions,
+    ) -> Result<Vec<u8>, MermaidError> {
         let script = diagram.build_script();
         self.render_png_from_script(&script, options).await
     }
 
-    pub async fn render_png_from_script(&self, script: &str, options: &RenderOptions) -> Result<Vec<u8>, MermaidError> {
+    pub async fn render_png_from_script(
+        &self,
+        script: &str,
+        options: &RenderOptions,
+    ) -> Result<Vec<u8>, MermaidError> {
         let encoded = encode_diagram(script);
         let url = self.build_url("img", &encoded, options);
 
@@ -101,7 +118,12 @@ impl MermaidClient {
     }
 
     /// Build the URL for a render request
-    pub fn build_render_url(&self, diagram: &dyn Diagram, format: &str, options: &RenderOptions) -> String {
+    pub fn build_render_url(
+        &self,
+        diagram: &dyn Diagram,
+        format: &str,
+        options: &RenderOptions,
+    ) -> String {
         let script = diagram.build_script();
         let encoded = encode_diagram(&script);
         self.build_url(format, &encoded, options)

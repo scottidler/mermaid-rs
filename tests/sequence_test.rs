@@ -99,7 +99,10 @@ fn sequence_with_logic_alt() {
         .logic(
             Logic::alt("Success")
                 .with_message(Message::new("Server", "Client").with_text("200 OK"))
-                .with_else_condition("Failure", vec![Message::new("Server", "Client").with_text("500 Error")]),
+                .with_else_condition(
+                    "Failure",
+                    vec![Message::new("Server", "Client").with_text("500 Error")],
+                ),
         )
         .build();
     let mermaid = diagram.to_mermaid();
@@ -114,7 +117,10 @@ fn sequence_with_logic_loop() {
     let diagram = SequenceDiagram::builder()
         .participant_simple("Server")
         .participant_simple("Client")
-        .logic(Logic::loop_block("Every 5 seconds").with_message(Message::new("Server", "Client").with_text("ping")))
+        .logic(
+            Logic::loop_block("Every 5 seconds")
+                .with_message(Message::new("Server", "Client").with_text("ping")),
+        )
         .build();
     let mermaid = diagram.to_mermaid();
 

@@ -84,13 +84,21 @@ fn requirement_diagram_relationship_types() {
 
     for (rel, expected) in relationships {
         let mermaid = rel.to_mermaid();
-        assert!(mermaid.contains(expected), "Relationship should contain {}", expected);
+        assert!(
+            mermaid.contains(expected),
+            "Relationship should contain {}",
+            expected
+        );
     }
 }
 
 #[test]
 fn requirement_diagram_risk_levels() {
-    let risks = vec![(Risk::Low, "Low"), (Risk::Medium, "Medium"), (Risk::High, "High")];
+    let risks = vec![
+        (Risk::Low, "Low"),
+        (Risk::Medium, "Medium"),
+        (Risk::High, "High"),
+    ];
 
     for (risk, expected) in risks {
         let req = Requirement::new("ID", "Name").with_risk(risk);

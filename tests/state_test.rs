@@ -15,7 +15,9 @@ fn state_diagram_empty() {
 
 #[test]
 fn state_diagram_with_direction() {
-    let diagram = StateDiagram::builder().direction(Direction::LeftRight).build();
+    let diagram = StateDiagram::builder()
+        .direction(Direction::LeftRight)
+        .build();
     let mermaid = diagram.to_mermaid();
     assert!(mermaid.contains("direction LR"));
 }
@@ -107,7 +109,11 @@ fn state_diagram_with_fork_join() {
         .state_simple("End")
         .transition_simple("Start", "fork1")
         .fork(Fork::new("fork1").with_target("Task1").with_target("Task2"))
-        .join(Join::new("join1", "End").with_source("Task1").with_source("Task2"))
+        .join(
+            Join::new("join1", "End")
+                .with_source("Task1")
+                .with_source("Task2"),
+        )
         .build();
     let mermaid = diagram.to_mermaid();
 

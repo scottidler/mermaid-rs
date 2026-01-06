@@ -100,7 +100,9 @@ impl MindmapBuilder {
 
     /// Add a child with shape to the root node
     pub fn child_with_shape(mut self, text: impl Into<String>, shape: MindmapNodeShape) -> Self {
-        self.root.children.push(MindmapNode::new(text).with_shape(shape));
+        self.root
+            .children
+            .push(MindmapNode::new(text).with_shape(shape));
         self
     }
 
@@ -125,7 +127,10 @@ mod tests {
 
     #[test]
     fn mindmap_basic() {
-        let mindmap = Mindmap::builder("Root").child("Child1").child("Child2").build();
+        let mindmap = Mindmap::builder("Root")
+            .child("Child1")
+            .child("Child2")
+            .build();
 
         let mermaid = mindmap.to_mermaid();
         assert!(mermaid.contains("mindmap"));

@@ -37,7 +37,12 @@ pub async fn run(args: MindmapArgs, global: &GlobalOptions) -> Result<(), Mermai
         background_color: None,
     };
 
-    let output_handler = OutputHandler::new(global.output.clone(), global.stdout, global.clipboard, global.open);
+    let output_handler = OutputHandler::new(
+        global.output.clone(),
+        global.stdout,
+        global.clipboard,
+        global.open,
+    );
 
     if matches!(global.format, OutputFormat::Mermaid) {
         let script = diagram.build_script();
@@ -65,7 +70,10 @@ pub async fn run(args: MindmapArgs, global: &GlobalOptions) -> Result<(), Mermai
 async fn build_diagram(args: &MindmapArgs) -> Result<Mindmap, MermaidError> {
     if let Some(path) = &args.input.input {
         let content = tokio::fs::read_to_string(path).await?;
-        let ext = path.extension().and_then(std::ffi::OsStr::to_str).unwrap_or("yaml");
+        let ext = path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .unwrap_or("yaml");
         return parse_diagram(&content, ext);
     }
 
@@ -73,7 +81,11 @@ async fn build_diagram(args: &MindmapArgs) -> Result<Mindmap, MermaidError> {
         use tokio::io::AsyncReadExt;
         let mut buffer = String::new();
         tokio::io::stdin().read_to_string(&mut buffer).await?;
-        let ext = if buffer.trim_start().starts_with('{') { "json" } else { "yaml" };
+        let ext = if buffer.trim_start().starts_with('{') {
+            "json"
+        } else {
+            "yaml"
+        };
         return parse_diagram(&buffer, ext);
     }
 
@@ -106,6 +118,9 @@ fn parse_diagram(content: &str, format: &str) -> Result<Mindmap, MermaidError> {
         "json" => Mindmap::from_json(content),
         "yaml" | "yml" => Mindmap::from_yaml(content),
         "toml" => Mindmap::from_toml(content),
-        _ => Err(MermaidError::InvalidInput(format!("Unsupported format: {}", format))),
+        _ => Err(MermaidError::InvalidInput(format!(
+            "Unsupported format: {}",
+            format
+        ))),
     }
 }

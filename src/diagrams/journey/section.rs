@@ -50,7 +50,9 @@ mod tests {
 
     #[test]
     fn section_basic() {
-        let section = Section::new("Onboarding").task("Sign up", 5).task("Verify email", 3);
+        let section = Section::new("Onboarding")
+            .task("Sign up", 5)
+            .task("Verify email", 3);
 
         let mermaid = section.to_mermaid();
         assert!(mermaid.contains("section Onboarding"));

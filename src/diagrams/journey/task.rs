@@ -29,7 +29,12 @@ impl Task {
 
     pub fn to_mermaid(&self) -> String {
         // Match mermaid-py format: always include actors field (even if empty)
-        format!("\t\t{}: {} : {}\n", self.name, self.score, self.actors.join(", "))
+        format!(
+            "\t\t{}: {} : {}\n",
+            self.name,
+            self.score,
+            self.actors.join(", ")
+        )
     }
 }
 

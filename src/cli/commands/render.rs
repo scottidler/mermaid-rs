@@ -35,7 +35,12 @@ pub async fn run(args: RenderArgs, global: &GlobalOptions) -> Result<(), Mermaid
     };
 
     // Create output handler
-    let output_handler = OutputHandler::new(global.output.clone(), global.stdout, global.clipboard, global.open);
+    let output_handler = OutputHandler::new(
+        global.output.clone(),
+        global.stdout,
+        global.clipboard,
+        global.open,
+    );
 
     // Handle mermaid format specially (no rendering needed)
     if matches!(global.format, OutputFormat::Mermaid) {
@@ -48,11 +53,15 @@ pub async fn run(args: RenderArgs, global: &GlobalOptions) -> Result<(), Mermaid
 
     match global.format {
         OutputFormat::Svg => {
-            let svg = client.render_svg_from_script(&script, &render_options).await?;
+            let svg = client
+                .render_svg_from_script(&script, &render_options)
+                .await?;
             output_handler.write_svg(&svg).await?;
         }
         OutputFormat::Png => {
-            let png = client.render_png_from_script(&script, &render_options).await?;
+            let png = client
+                .render_png_from_script(&script, &render_options)
+                .await?;
             output_handler.write_png(&png).await?;
         }
         OutputFormat::Mermaid => unreachable!(),

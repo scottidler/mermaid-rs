@@ -36,7 +36,12 @@ pub async fn run(args: PieArgs, global: &GlobalOptions) -> Result<(), MermaidErr
     };
 
     // Create output handler
-    let output_handler = OutputHandler::new(global.output.clone(), global.stdout, global.clipboard, global.open);
+    let output_handler = OutputHandler::new(
+        global.output.clone(),
+        global.stdout,
+        global.clipboard,
+        global.open,
+    );
 
     // Handle mermaid format specially (no rendering needed)
     if matches!(global.format, OutputFormat::Mermaid) {
@@ -67,7 +72,10 @@ async fn build_chart(args: &PieArgs) -> Result<PieChart, MermaidError> {
     // If input file or stdin specified, load from there
     if let Some(path) = &args.input.input {
         let content = tokio::fs::read_to_string(path).await?;
-        let ext = path.extension().and_then(std::ffi::OsStr::to_str).unwrap_or("yaml");
+        let ext = path
+            .extension()
+            .and_then(std::ffi::OsStr::to_str)
+            .unwrap_or("yaml");
         return parse_chart(&content, ext);
     }
 
@@ -76,7 +84,11 @@ async fn build_chart(args: &PieArgs) -> Result<PieChart, MermaidError> {
         let mut buffer = String::new();
         tokio::io::stdin().read_to_string(&mut buffer).await?;
         // Try to detect format from content
-        let ext = if buffer.trim_start().starts_with('{') { "json" } else { "yaml" };
+        let ext = if buffer.trim_start().starts_with('{') {
+            "json"
+        } else {
+            "yaml"
+        };
         return parse_chart(&buffer, ext);
     }
 
@@ -109,7 +121,10 @@ fn parse_chart(content: &str, format: &str) -> Result<PieChart, MermaidError> {
         "json" => PieChart::from_json(content),
         "yaml" | "yml" => PieChart::from_yaml(content),
         "toml" => PieChart::from_toml(content),
-        _ => Err(MermaidError::InvalidInput(format!("Unsupported format: {}", format))),
+        _ => Err(MermaidError::InvalidInput(format!(
+            "Unsupported format: {}",
+            format
+        ))),
     }
 }
 
@@ -123,10 +138,9 @@ fn parse_data_spec(spec: &str) -> Result<(String, f64), MermaidError> {
     }
 
     let label = parts[0].trim().to_string();
-    let value: f64 = parts[1]
-        .trim()
-        .parse()
-        .map_err(|_| MermaidError::InvalidInput(format!("Invalid numeric value '{}' in data spec", parts[1])))?;
+    let value: f64 = parts[1].trim().parse().map_err(|_| {
+        MermaidError::InvalidInput(format!("Invalid numeric value '{}' in data spec", parts[1]))
+    })?;
 
     Ok((label, value))
 }
