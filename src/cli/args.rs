@@ -95,11 +95,20 @@ impl OutputFormat {
 
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Generate a flowchart diagram
+    Flowchart(commands::flowchart::FlowchartArgs),
+
     /// Generate a pie chart
     Pie(commands::pie::PieArgs),
 
     /// Render a raw .mmd file or mermaid string
     Render(commands::render::RenderArgs),
+
+    /// Generate a sequence diagram
+    Sequence(commands::sequence::SequenceArgs),
+
+    /// Generate a state diagram
+    State(commands::state::StateArgs),
 }
 
 /// Common input options for diagram subcommands

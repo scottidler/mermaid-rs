@@ -10,7 +10,10 @@ async fn main() -> Result<(), MermaidError> {
     let cli = Cli::parse();
 
     match cli.command {
+        Commands::Flowchart(args) => mermaid_rs::cli::commands::flowchart::run(args, &cli.global).await,
         Commands::Pie(args) => mermaid_rs::cli::commands::pie::run(args, &cli.global).await,
         Commands::Render(args) => mermaid_rs::cli::commands::render::run(args, &cli.global).await,
+        Commands::Sequence(args) => mermaid_rs::cli::commands::sequence::run(args, &cli.global).await,
+        Commands::State(args) => mermaid_rs::cli::commands::state::run(args, &cli.global).await,
     }
 }

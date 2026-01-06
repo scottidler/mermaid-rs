@@ -16,7 +16,10 @@ fn cli_help() {
 
     assert!(output.status.success());
     assert!(stdout.contains("mermaid"));
+    assert!(stdout.contains("flowchart"));
     assert!(stdout.contains("pie"));
+    assert!(stdout.contains("sequence"));
+    assert!(stdout.contains("state"));
     assert!(stdout.contains("render"));
 }
 
@@ -117,4 +120,200 @@ fn cli_global_options() {
 
     // Should succeed with global options
     assert!(output.status.success());
+}
+
+// Flowchart CLI tests
+
+#[test]
+fn cli_flowchart_help() {
+    let output = run_cli(&["flowchart", "--help"]);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("--node"));
+    assert!(stdout.contains("--link"));
+    assert!(stdout.contains("--direction"));
+}
+
+#[test]
+fn cli_flowchart_mermaid_output() {
+    let output = run_cli(&[
+        "flowchart",
+        "--node",
+        "A:Start:stadium",
+        "--node",
+        "B:End:stadium",
+        "--link",
+        "A->B",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("flowchart"));
+    assert!(stdout.contains("A([\"Start\"])"));
+    assert!(stdout.contains("A --> B"));
+}
+
+#[test]
+fn cli_flowchart_with_direction() {
+    let output = run_cli(&[
+        "flowchart",
+        "--direction",
+        "LR",
+        "--node",
+        "A:Test",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("flowchart LR"));
+}
+
+#[test]
+fn cli_flowchart_with_link_label() {
+    let output = run_cli(&[
+        "flowchart",
+        "--node",
+        "A:Start",
+        "--node",
+        "B:End",
+        "--link",
+        "A->B::goes to",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("|goes to|"));
+}
+
+// Sequence CLI tests
+
+#[test]
+fn cli_sequence_help() {
+    let output = run_cli(&["sequence", "--help"]);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("--actor"));
+    assert!(stdout.contains("--participant"));
+    assert!(stdout.contains("--message"));
+    assert!(stdout.contains("--autonumber"));
+}
+
+#[test]
+fn cli_sequence_mermaid_output() {
+    let output = run_cli(&[
+        "sequence",
+        "--actor",
+        "User",
+        "--participant",
+        "Server",
+        "--message",
+        "User->Server::Request",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("sequenceDiagram"));
+    assert!(stdout.contains("actor User"));
+    assert!(stdout.contains("participant Server"));
+}
+
+#[test]
+fn cli_sequence_with_autonumber() {
+    let output = run_cli(&[
+        "sequence",
+        "--autonumber",
+        "--participant",
+        "A",
+        "--participant",
+        "B",
+        "--message",
+        "A->B::Hello",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("autonumber"));
+}
+
+// State CLI tests
+
+#[test]
+fn cli_state_help() {
+    let output = run_cli(&["state", "--help"]);
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("--state"));
+    assert!(stdout.contains("--transition"));
+    assert!(stdout.contains("--direction"));
+}
+
+#[test]
+fn cli_state_mermaid_output() {
+    let output = run_cli(&[
+        "state",
+        "--state",
+        "Active",
+        "--state",
+        "Inactive",
+        "--transition",
+        "[*]->Inactive",
+        "--transition",
+        "Inactive->Active:start",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("stateDiagram-v2"));
+    assert!(stdout.contains("[*] --> Inactive"));
+    assert!(stdout.contains("Inactive --> Active: start"));
+}
+
+#[test]
+fn cli_state_with_direction() {
+    let output = run_cli(&[
+        "state",
+        "--direction",
+        "LR",
+        "--state",
+        "On",
+        "--state",
+        "Off",
+        "--transition",
+        "On->Off",
+        "--format",
+        "mermaid",
+        "--stdout",
+    ]);
+
+    let stdout = String::from_utf8_lossy(&output.stdout);
+
+    assert!(output.status.success());
+    assert!(stdout.contains("direction LR"));
 }

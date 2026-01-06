@@ -3,6 +3,7 @@
 use mermaid_rs::diagrams::pie::PieChart;
 
 /// Create a simple test pie chart
+#[allow(dead_code)]
 pub fn simple_pie_chart() -> PieChart {
     PieChart::builder()
         .title("Test Chart")

@@ -19,6 +19,14 @@ impl Style {
         Self::default()
     }
 
+    pub fn builder() -> Self {
+        Self::default()
+    }
+
+    pub fn build(self) -> Self {
+        self
+    }
+
     pub fn fill(mut self, fill: impl Into<String>) -> Self {
         self.fill = Some(fill.into());
         self
