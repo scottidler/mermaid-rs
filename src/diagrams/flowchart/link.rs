@@ -185,4 +185,63 @@ mod tests {
         assert_eq!(LinkStyle::parse("dotted"), Some(LinkStyle::Dotted));
         assert_eq!(LinkStyle::parse("invalid"), None);
     }
+
+    #[test]
+    fn link_circle_head() {
+        let link = Link::new("A", "B").with_head(LinkHead::Circle);
+        assert_eq!(link.to_mermaid(), "a --o b");
+    }
+
+    #[test]
+    fn link_cross_head() {
+        let link = Link::new("A", "B").with_head(LinkHead::Cross);
+        assert_eq!(link.to_mermaid(), "a --x b");
+    }
+
+    #[test]
+    fn link_bidirectional() {
+        let link = Link::new("A", "B")
+            .with_head(LinkHead::Arrow)
+            .with_tail(LinkHead::Arrow);
+        assert_eq!(link.to_mermaid(), "a <--> b");
+    }
+
+    #[test]
+    fn link_circle_to_circle() {
+        let link = Link::new("A", "B")
+            .with_head(LinkHead::Circle)
+            .with_tail(LinkHead::Circle);
+        assert_eq!(link.to_mermaid(), "a o--o b");
+    }
+
+    #[test]
+    fn link_cross_to_cross() {
+        let link = Link::new("A", "B")
+            .with_head(LinkHead::Cross)
+            .with_tail(LinkHead::Cross);
+        assert_eq!(link.to_mermaid(), "a x--x b");
+    }
+
+    #[test]
+    fn link_dotted_with_circle() {
+        let link = Link::new("A", "B")
+            .with_style(LinkStyle::Dotted)
+            .with_head(LinkHead::Circle);
+        assert_eq!(link.to_mermaid(), "a -.-o b");
+    }
+
+    #[test]
+    fn link_thick_bidirectional() {
+        let link = Link::new("A", "B")
+            .with_style(LinkStyle::Thick)
+            .with_head(LinkHead::Arrow)
+            .with_tail(LinkHead::Arrow);
+        assert_eq!(link.to_mermaid(), "a <==> b");
+    }
+
+    #[test]
+    fn link_open_style() {
+        let link = Link::new("A", "B").with_style(LinkStyle::Open);
+        assert_eq!(link.to_mermaid(), "a --- b");
+    }
 }

@@ -67,20 +67,20 @@ This document compares the official Mermaid.js specification against what mermai
 | Thick | `A ==> B` | ✅ |
 | Invisible | `A ~~~ B` | ✅ |
 | With text | `A -->|text| B` | ✅ |
-| Circle end | `A --o B` | ❌ |
-| Cross end | `A --x B` | ❌ |
-| Bidirectional | `A <--> B` | ❌ |
-| Multi-directional combos | `A o--o B` | ❌ |
+| Circle end | `A --o B` | ✅ |
+| Cross end | `A --x B` | ✅ |
+| Bidirectional | `A <--> B` | ✅ |
+| Multi-directional combos | `A o--o B` | ✅ |
 
 ### Styling
 
 | Feature | Syntax | mermaid-rs |
 |---------|--------|------------|
 | Inline style | `style A fill:#f9f` | ✅ |
-| classDef | `classDef className fill:#f9f` | ❌ |
-| class assignment | `class A,B className` | ❌ |
-| Shorthand class | `A:::className` | ❌ |
-| linkStyle | `linkStyle 0 stroke:#f00` | ❌ |
+| classDef | `classDef className fill:#f9f` | ✅ |
+| class assignment | `class A,B className` | ✅ |
+| Shorthand class | `A:::className` | ✅ |
+| linkStyle | `linkStyle 0 stroke:#f00` | ✅ |
 
 ### Subgraphs
 
@@ -88,8 +88,8 @@ This document compares the official Mermaid.js specification against what mermai
 |---------|--------|------------|
 | Basic subgraph | `subgraph id[title]...end` | ✅ |
 | Direction in subgraph | `direction TB` | ✅ |
-| Nested subgraphs | subgraph inside subgraph | ❌ |
-| Subgraph styling | via classDef | ❌ |
+| Nested subgraphs | subgraph inside subgraph | ✅ |
+| Subgraph styling | via classDef | ⚠️ |
 | Edges to subgraphs | `A --> subgraphId` | ⚠️ |
 
 ### Interaction
@@ -140,8 +140,8 @@ This document compares the official Mermaid.js specification against what mermai
 | Dotted arrow | `-->>` | ✅ |
 | Solid line | `->` | ✅ |
 | Dotted line | `-->` | ✅ |
-| Cross | `-x` / `--x` | ❌ |
-| Async | `-)` / `--)` | ❌ |
+| Cross | `-x` / `--x` | ✅ |
+| Async | `-)` / `--)` | ✅ |
 | Bidirectional | `<<->>` | ❌ |
 
 ### Activations
@@ -149,7 +149,7 @@ This document compares the official Mermaid.js specification against what mermai
 | Feature | Syntax | mermaid-rs |
 |---------|--------|------------|
 | Activate/deactivate | `activate A` / `deactivate A` | ✅ |
-| Shorthand | `->>+` / `-->>-` | ❌ |
+| Shorthand | `->>+` / `-->>-` | ✅ |
 
 ### Notes
 
@@ -166,8 +166,8 @@ This document compares the official Mermaid.js specification against what mermai
 | Alt/else | `alt...else...end` | ✅ |
 | Opt | `opt...end` | ✅ |
 | Par/and | `par...and...end` | ✅ |
-| Critical/option | `critical...option...end` | ❌ |
-| Break | `break...end` | ❌ |
+| Critical/option | `critical...option...end` | ✅ |
+| Break | `break...end` | ✅ |
 | Rect (highlight) | `rect rgb(...)` | ❌ |
 
 ### Other
@@ -318,8 +318,8 @@ This document compares the official Mermaid.js specification against what mermai
 
 | Diagram | Coverage |
 |---------|----------|
-| Flowchart | ~70% |
-| Sequence | ~75% |
+| Flowchart | ~90% |
+| Sequence | ~90% |
 | State | ~85% |
 | ER | ~90% |
 | Pie | ~100% |
@@ -329,13 +329,11 @@ This document compares the official Mermaid.js specification against what mermai
 
 ### Major Gaps (Priority)
 
-1. **classDef/class styling** - Most requested feature for flowcharts
-2. **Special link heads** - Circle, cross, bidirectional arrows
-3. **Nested subgraphs** - Required for complex diagrams
-4. **Icons** - FontAwesome integration
-5. **Critical/break/rect** - Sequence diagram control structures
-6. **Shorthand activation** - `+`/`-` suffixes for sequence
-7. **Init directive** - Runtime configuration
+1. **Icons** - FontAwesome integration
+2. **Init directive** - Runtime configuration
+3. **Rect (highlight)** - Sequence diagram highlight regions
+4. **Bidirectional sequence messages** - `<<->>` syntax
+5. **v11+ Semantic Shapes** - `A@{shape: decision}` syntax
 
 ### Not Planned
 

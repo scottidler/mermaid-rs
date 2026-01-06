@@ -12,6 +12,9 @@ pub struct Message {
     pub activate: bool,
     #[serde(default)]
     pub deactivate: bool,
+    /// Use shorthand activation syntax (->>+ / -->>-)
+    #[serde(default)]
+    pub shorthand_activation: bool,
 }
 
 impl Message {
@@ -23,6 +26,7 @@ impl Message {
             text: None,
             activate: false,
             deactivate: false,
+            shorthand_activation: false,
         }
     }
 
@@ -46,24 +50,50 @@ impl Message {
         self
     }
 
+    /// Use shorthand activation syntax (->>+ instead of separate activate statement)
+    pub fn with_shorthand_activation(mut self) -> Self {
+        self.shorthand_activation = true;
+        self
+    }
+
     pub fn to_mermaid(&self) -> String {
         let arrow = self.message_type.arrow();
         let mut output = String::new();
 
-        // Main message line
-        let msg_line = match &self.text {
-            Some(text) => format!("{}{}{}: {}", self.from, arrow, self.to, text),
-            None => format!("{}{}{}", self.from, arrow, self.to),
+        // Build arrow with optional shorthand activation/deactivation
+        let arrow_with_activation = if self.shorthand_activation {
+            if self.activate && self.deactivate {
+                // Both activate and deactivate: ->>+- (unusual but possible)
+                format!("{}+-", arrow)
+            } else if self.activate {
+                format!("{}+", arrow)
+            } else if self.deactivate {
+                format!("{}-", arrow)
+            } else {
+                arrow.to_string()
+            }
+        } else {
+            arrow.to_string()
         };
 
-        // Handle activation/deactivation
-        if self.activate {
+        // Handle non-shorthand activation (separate line before)
+        if !self.shorthand_activation && self.activate {
             output.push_str(&format!("activate {}\n    ", self.to));
         }
 
+        // Main message line
+        let msg_line = match &self.text {
+            Some(text) => format!(
+                "{}{}{}: {}",
+                self.from, arrow_with_activation, self.to, text
+            ),
+            None => format!("{}{}{}", self.from, arrow_with_activation, self.to),
+        };
+
         output.push_str(&msg_line);
 
-        if self.deactivate {
+        // Handle non-shorthand deactivation (separate line after)
+        if !self.shorthand_activation && self.deactivate {
             output.push_str(&format!("\n    deactivate {}", self.to));
         }
 
@@ -150,5 +180,49 @@ mod tests {
             Some(MessageType::SolidArrow)
         );
         assert_eq!(MessageType::parse("invalid"), None);
+    }
+
+    #[test]
+    fn message_shorthand_activate() {
+        let msg = Message::new("Alice", "Bob")
+            .with_text("request")
+            .activate()
+            .with_shorthand_activation();
+        assert_eq!(msg.to_mermaid(), "Alice->>+Bob: request");
+    }
+
+    #[test]
+    fn message_shorthand_deactivate() {
+        let msg = Message::new("Bob", "Alice")
+            .with_text("response")
+            .deactivate()
+            .with_shorthand_activation();
+        assert_eq!(msg.to_mermaid(), "Bob->>-Alice: response");
+    }
+
+    #[test]
+    fn message_shorthand_dotted_activate() {
+        let msg = Message::new("Alice", "Bob")
+            .with_type(MessageType::DottedArrow)
+            .with_text("async call")
+            .activate()
+            .with_shorthand_activation();
+        assert_eq!(msg.to_mermaid(), "Alice-->>+Bob: async call");
+    }
+
+    #[test]
+    fn message_cross_type() {
+        let msg = Message::new("A", "B")
+            .with_type(MessageType::SolidCross)
+            .with_text("failed");
+        assert_eq!(msg.to_mermaid(), "A-xB: failed");
+    }
+
+    #[test]
+    fn message_open_type() {
+        let msg = Message::new("A", "B")
+            .with_type(MessageType::SolidOpen)
+            .with_text("async");
+        assert_eq!(msg.to_mermaid(), "A-)B: async");
     }
 }

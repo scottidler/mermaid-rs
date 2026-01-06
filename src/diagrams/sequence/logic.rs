@@ -188,6 +188,43 @@ mod tests {
     fn logic_type_parse() {
         assert_eq!(LogicType::parse("alt"), Some(LogicType::Alt));
         assert_eq!(LogicType::parse("loop"), Some(LogicType::Loop));
+        assert_eq!(LogicType::parse("critical"), Some(LogicType::Critical));
+        assert_eq!(LogicType::parse("break"), Some(LogicType::Break));
         assert_eq!(LogicType::parse("invalid"), None);
+    }
+
+    #[test]
+    fn logic_critical() {
+        let logic = Logic::critical("Mutex lock")
+            .with_message(Message::new("A", "B").with_text("critical section"))
+            .with_else_condition("Error", vec![Message::new("A", "B").with_text("rollback")]);
+
+        let mermaid = logic.to_mermaid();
+        assert!(mermaid.contains("critical Mutex lock"));
+        assert!(mermaid.contains("else Error"));
+        assert!(mermaid.contains("end"));
+    }
+
+    #[test]
+    fn logic_break() {
+        let logic = Logic::break_block("Error found")
+            .with_message(Message::new("A", "B").with_text("abort"));
+
+        let mermaid = logic.to_mermaid();
+        assert!(mermaid.contains("break Error found"));
+        assert!(mermaid.contains("A->>B: abort"));
+        assert!(mermaid.contains("end"));
+    }
+
+    #[test]
+    fn logic_par() {
+        let logic = Logic::par("Parallel tasks")
+            .with_message(Message::new("A", "B").with_text("task1"))
+            .with_else_condition("and", vec![Message::new("A", "C").with_text("task2")]);
+
+        let mermaid = logic.to_mermaid();
+        assert!(mermaid.contains("par Parallel tasks"));
+        assert!(mermaid.contains("else and"));
+        assert!(mermaid.contains("end"));
     }
 }

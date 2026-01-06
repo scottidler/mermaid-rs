@@ -16,6 +16,9 @@ pub struct Node {
     /// How the hyperlink opens (default: Blank for new tab)
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub href_type: Option<HrefType>,
+    /// CSS class name for the node (uses :::className shorthand syntax)
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub class_name: Option<String>,
 }
 
 impl Node {
@@ -27,6 +30,7 @@ impl Node {
             style: None,
             href: None,
             href_type: None,
+            class_name: None,
         }
     }
 
@@ -47,11 +51,22 @@ impl Node {
         self
     }
 
+    /// Add a CSS class name to this node (uses :::className shorthand)
+    pub fn with_class(mut self, class_name: impl Into<String>) -> Self {
+        self.class_name = Some(class_name.into());
+        self
+    }
+
     /// Renders the node in mermaid syntax
     pub fn to_mermaid(&self) -> String {
         // Normalize ID to match mermaid-py's text_to_snake_case()
         let normalized_id = normalize_id(&self.id);
         let mut output = format!("{}{}", normalized_id, self.shape.wrap(&self.label));
+
+        // Add class shorthand if set
+        if let Some(class_name) = &self.class_name {
+            output.push_str(&format!(":::{}", class_name));
+        }
 
         // Add click directive if href is set
         if let Some(href) = &self.href {
@@ -227,5 +242,12 @@ mod tests {
         assert_eq!(HrefType::parse("parent"), Some(HrefType::Parent));
         assert_eq!(HrefType::parse("top"), Some(HrefType::Top));
         assert_eq!(HrefType::parse("invalid"), None);
+    }
+
+    #[test]
+    fn node_with_class() {
+        let node = Node::new("A", "Styled Node", NodeShape::Rectangle).with_class("highlight");
+        let mermaid = node.to_mermaid();
+        assert_eq!(mermaid, "a[\"Styled Node\"]:::highlight");
     }
 }

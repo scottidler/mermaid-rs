@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::core::{Config, Diagram, Direction, FromConfig, MermaidError, Style, Theme};
 
-use super::{Link, LinkStyle, Node, NodeShape, Subgraph};
+use super::{ClassAssignment, ClassDef, Link, LinkStyle, LinkStyleDef, Node, NodeShape, Subgraph};
 
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct FlowChart {
@@ -18,6 +18,15 @@ pub struct FlowChart {
     pub subgraphs: Vec<Subgraph>,
     #[serde(default)]
     pub styles: Vec<NodeStyle>,
+    /// Class definitions (classDef)
+    #[serde(default)]
+    pub class_defs: Vec<ClassDef>,
+    /// Class assignments (class A,B className)
+    #[serde(default)]
+    pub class_assignments: Vec<ClassAssignment>,
+    /// Link styling (linkStyle 0 stroke:#f00)
+    #[serde(default)]
+    pub link_styles: Vec<LinkStyleDef>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub config: Option<Config>,
     /// Raw mermaid passthrough (if set, ignores other fields)
@@ -63,14 +72,30 @@ impl FlowChart {
         Ok(chart)
     }
 
-    /// Render nodes that belong to a specific subgraph
-    fn render_nodes_for_subgraph(&self, subgraph: &Subgraph, indent: &str) -> String {
-        let mut output = String::new();
+    /// Render a subgraph with its nodes and nested subgraphs
+    fn render_subgraph_with_nodes(&self, subgraph: &Subgraph, base_indent: &str) -> String {
+        let title = subgraph.title.as_deref().unwrap_or(&subgraph.id);
+        let mut output = format!("{}subgraph {} [\"{}\"]\n", base_indent, subgraph.id, title);
+
+        let inner_indent = format!("{}    ", base_indent);
+
+        if let Some(dir) = &subgraph.direction {
+            output.push_str(&format!("{}direction {}\n", inner_indent, dir));
+        }
+
+        // Render nodes belonging to this subgraph
         for node in &self.nodes {
             if subgraph.nodes.contains(&node.id) {
-                output.push_str(&format!("{}    {}\n", indent, node.to_mermaid()));
+                output.push_str(&format!("{}{}\n", inner_indent, node.to_mermaid()));
             }
         }
+
+        // Render nested subgraphs recursively
+        for nested in &subgraph.subgraphs {
+            output.push_str(&self.render_subgraph_with_nodes(nested, &inner_indent));
+        }
+
+        output.push_str(&format!("{}end\n", base_indent));
         output
     }
 }
@@ -100,11 +125,9 @@ impl Diagram for FlowChart {
             }
         }
 
-        // Render subgraphs
+        // Render subgraphs (with nested subgraphs support)
         for subgraph in &self.subgraphs {
-            output.push_str(&format!("    {}", subgraph.to_mermaid_start()));
-            output.push_str(&self.render_nodes_for_subgraph(subgraph, "    "));
-            output.push_str(&format!("    {}\n", subgraph.to_mermaid_end()));
+            output.push_str(&self.render_subgraph_with_nodes(subgraph, "    "));
         }
 
         // Render links
@@ -118,6 +141,21 @@ impl Diagram for FlowChart {
             if !css.is_empty() {
                 output.push_str(&format!("    style {} {}\n", node_style.target, css));
             }
+        }
+
+        // Render class definitions
+        for class_def in &self.class_defs {
+            output.push_str(&format!("    {}\n", class_def.to_mermaid()));
+        }
+
+        // Render class assignments
+        for class_assignment in &self.class_assignments {
+            output.push_str(&format!("    {}\n", class_assignment.to_mermaid()));
+        }
+
+        // Render link styles
+        for link_style in &self.link_styles {
+            output.push_str(&format!("    {}\n", link_style.to_mermaid()));
         }
 
         output
@@ -158,6 +196,9 @@ pub struct FlowChartBuilder {
     links: Vec<Link>,
     subgraphs: Vec<Subgraph>,
     styles: Vec<NodeStyle>,
+    class_defs: Vec<ClassDef>,
+    class_assignments: Vec<ClassAssignment>,
+    link_styles: Vec<LinkStyleDef>,
     config: Option<Config>,
 }
 
@@ -239,6 +280,25 @@ impl FlowChartBuilder {
         self
     }
 
+    /// Add a class definition (classDef className fill:#f9f)
+    pub fn class_def(mut self, name: impl Into<String>, style: Style) -> Self {
+        self.class_defs.push(ClassDef::new(name, style));
+        self
+    }
+
+    /// Assign a class to one or more nodes (class A,B className)
+    pub fn class_assignment(mut self, class_name: impl Into<String>, nodes: Vec<String>) -> Self {
+        self.class_assignments
+            .push(ClassAssignment::new(class_name, nodes));
+        self
+    }
+
+    /// Add link styling for a specific link index (linkStyle 0 stroke:#f00)
+    pub fn link_style(mut self, index: usize, style: Style) -> Self {
+        self.link_styles.push(LinkStyleDef::new(index, style));
+        self
+    }
+
     pub fn theme(mut self, theme: Theme) -> Self {
         let config = self.config.get_or_insert_with(Config::default);
         config.theme = theme;
@@ -258,6 +318,9 @@ impl FlowChartBuilder {
             links: self.links,
             subgraphs: self.subgraphs,
             styles: self.styles,
+            class_defs: self.class_defs,
+            class_assignments: self.class_assignments,
+            link_styles: self.link_styles,
             config: self.config,
             raw_mermaid: None,
         }
@@ -382,5 +445,99 @@ links:
         let raw = "flowchart LR\n    A --> B";
         let chart = FlowChart::from_raw_mermaid(raw.to_string());
         assert_eq!(chart.to_mermaid(), raw);
+    }
+
+    #[test]
+    fn flowchart_with_class_def() {
+        let chart = FlowChart::builder()
+            .node_simple("A", "Start")
+            .node_simple("B", "End")
+            .link_simple("A", "B")
+            .class_def(
+                "highlight",
+                Style::builder().fill("#f9f").stroke("#333").build(),
+            )
+            .build();
+
+        let mermaid = chart.to_mermaid();
+        assert!(mermaid.contains("classDef highlight fill:#f9f,stroke:#333"));
+    }
+
+    #[test]
+    fn flowchart_with_class_assignment() {
+        let chart = FlowChart::builder()
+            .node_simple("A", "Start")
+            .node_simple("B", "Process")
+            .node_simple("C", "End")
+            .link_simple("A", "B")
+            .link_simple("B", "C")
+            .class_def("important", Style::builder().fill("#ff0").build())
+            .class_assignment("important", vec!["A".to_string(), "C".to_string()])
+            .build();
+
+        let mermaid = chart.to_mermaid();
+        assert!(mermaid.contains("classDef important fill:#ff0"));
+        assert!(mermaid.contains("class A,C important"));
+    }
+
+    #[test]
+    fn flowchart_with_link_style() {
+        let chart = FlowChart::builder()
+            .node_simple("A", "Start")
+            .node_simple("B", "End")
+            .link_simple("A", "B")
+            .link_style(
+                0,
+                Style::builder()
+                    .stroke("#ff0000")
+                    .stroke_width("2px")
+                    .build(),
+            )
+            .build();
+
+        let mermaid = chart.to_mermaid();
+        assert!(mermaid.contains("linkStyle 0 stroke:#ff0000,stroke-width:2px"));
+    }
+
+    #[test]
+    fn flowchart_with_node_class_shorthand() {
+        let chart = FlowChart::builder()
+            .node(Node::new("A", "Styled", NodeShape::Rectangle).with_class("highlight"))
+            .class_def("highlight", Style::builder().fill("#f9f").build())
+            .build();
+
+        let mermaid = chart.to_mermaid();
+        assert!(mermaid.contains("a[\"Styled\"]:::highlight"));
+        assert!(mermaid.contains("classDef highlight fill:#f9f"));
+    }
+
+    #[test]
+    fn flowchart_with_nested_subgraphs() {
+        let inner = Subgraph::new("inner")
+            .with_title("Inner Group")
+            .with_nodes(vec!["B".to_string()]);
+
+        let outer = Subgraph::new("outer")
+            .with_title("Outer Group")
+            .with_nodes(vec!["A".to_string()])
+            .with_subgraph(inner);
+
+        let chart = FlowChart::builder()
+            .direction(Direction::TopBottom)
+            .node_simple("A", "Node A")
+            .node_simple("B", "Node B")
+            .node_simple("C", "Node C")
+            .subgraph(outer)
+            .link_simple("A", "B")
+            .link_simple("B", "C")
+            .build();
+
+        let mermaid = chart.to_mermaid();
+        assert!(mermaid.contains("subgraph outer"));
+        assert!(mermaid.contains("subgraph inner"));
+        assert!(mermaid.contains("Outer Group"));
+        assert!(mermaid.contains("Inner Group"));
+        // Should have two end statements
+        assert_eq!(mermaid.matches("end").count(), 2);
     }
 }
