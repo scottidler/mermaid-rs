@@ -1,0 +1,18 @@
+# Basic ER diagram
+type: er
+title: User Orders
+entities:
+  - name: User
+  - name: Order
+  - name: Product
+relationships:
+  - from: User
+    from_cardinality: exactly-one
+    to: Order
+    to_cardinality: zero-or-more
+    label: places
+  - from: Order
+    from_cardinality: zero-or-more
+    to: Product
+    to_cardinality: one-or-more
+    label: contains

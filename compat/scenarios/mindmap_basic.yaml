@@ -1,0 +1,18 @@
+# Basic mindmap
+type: mindmap
+title: Project Planning
+root:
+  text: Project
+  children:
+    - text: Planning
+      children:
+        - text: Requirements
+        - text: Timeline
+    - text: Development
+      children:
+        - text: Frontend
+        - text: Backend
+    - text: Testing
+      children:
+        - text: Unit Tests
+        - text: Integration

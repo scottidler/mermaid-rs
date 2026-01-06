@@ -1,0 +1,24 @@
+# Basic user journey
+type: journey
+title: User Onboarding
+sections:
+  - name: Discovery
+    tasks:
+      - name: Visit website
+        score: 5
+      - name: Read about features
+        score: 4
+  - name: Sign Up
+    tasks:
+      - name: Click register
+        score: 5
+      - name: Fill form
+        score: 3
+      - name: Verify email
+        score: 4
+  - name: First Use
+    tasks:
+      - name: Complete tutorial
+        score: 4
+      - name: Create first item
+        score: 5

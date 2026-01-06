@@ -1,0 +1,20 @@
+# Basic sequence diagram
+type: sequence
+title: API Request
+participants:
+  - id: Client
+  - id: Server
+  - id: Database
+messages:
+  - from: Client
+    to: Server
+    text: HTTP Request
+  - from: Server
+    to: Database
+    text: Query
+  - from: Database
+    to: Server
+    text: Results
+  - from: Server
+    to: Client
+    text: HTTP Response

@@ -1,0 +1,16 @@
+# Basic flowchart test
+type: flowchart
+title: Simple Flow
+direction: TB
+nodes:
+  - id: A
+    label: Start
+  - id: B
+    label: Process
+  - id: C
+    label: End
+links:
+  - from: A
+    to: B
+  - from: B
+    to: C

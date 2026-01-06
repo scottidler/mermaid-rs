@@ -1,0 +1,19 @@
+# Basic state diagram
+type: state
+title: Traffic Light
+states:
+  - id: Green
+  - id: Yellow
+  - id: Red
+transitions:
+  - from: "[*]"
+    to: Green
+  - from: Green
+    to: Yellow
+    label: timer
+  - from: Yellow
+    to: Red
+    label: timer
+  - from: Red
+    to: Green
+    label: timer

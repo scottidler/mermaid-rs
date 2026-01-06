@@ -1,0 +1,15 @@
+# Pie chart with showData enabled
+type: pie
+title: Programming Languages
+show_data: true
+data:
+  - label: Python
+    value: 30
+  - label: JavaScript
+    value: 25
+  - label: Rust
+    value: 20
+  - label: Go
+    value: 15
+  - label: Other
+    value: 10

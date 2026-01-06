@@ -86,3 +86,27 @@ tasks:
       cargo install --path .
       echo "✅ Binary installed to ~/.cargo/bin"
 
+  # Compatibility test setup - install mermaid-py in venv
+  compat-setup:
+    help: "Set up mermaid-py venv for compatibility testing (idempotent)"
+    bash: |
+      cd compat
+      if [ ! -d ".venv" ]; then
+        echo "📦 Creating Python venv..."
+        uv venv .venv
+      fi
+      echo "📦 Installing mermaid-py..."
+      uv pip install --quiet mermaid-py pyyaml
+      echo "✅ mermaid-py environment ready"
+
+  # Run compatibility tests against mermaid-py
+  compat:
+    help: "Run compatibility tests comparing mermaid-rs to mermaid-py"
+    before: [compat-setup, build]
+    bash: |
+      echo "🔄 Running compatibility tests..."
+      cd compat
+      .venv/bin/python run_comparison.py
+      echo ""
+      echo "✅ Compatibility tests complete"
+

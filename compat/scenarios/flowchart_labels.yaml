@@ -1,0 +1,28 @@
+# Flowchart with link labels
+type: flowchart
+title: Decision Flow
+direction: TB
+nodes:
+  - id: start
+    label: Start
+  - id: check
+    label: Check condition
+  - id: yes_path
+    label: Yes branch
+  - id: no_path
+    label: No branch
+  - id: end
+    label: End
+links:
+  - from: start
+    to: check
+  - from: check
+    to: yes_path
+    label: "Yes"
+  - from: check
+    to: no_path
+    label: "No"
+  - from: yes_path
+    to: end
+  - from: no_path
+    to: end

@@ -1,0 +1,12 @@
+# Basic pie chart test
+type: pie
+title: Browser Market Share
+data:
+  - label: Chrome
+    value: 65
+  - label: Firefox
+    value: 15
+  - label: Safari
+    value: 12
+  - label: Edge
+    value: 8
