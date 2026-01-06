@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::core::normalize_id;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct State {
     pub id: String,
@@ -43,8 +45,8 @@ impl State {
         match self.state_type {
             StateType::Start | StateType::End => String::new(), // Start/End are rendered as transitions
             StateType::Normal => {
-                // mermaid-py lowercases IDs and always outputs "id : content" format
-                let id = self.id.to_lowercase();
+                // Normalize ID to match mermaid-py's text_to_snake_case()
+                let id = normalize_id(&self.id);
                 let content = self.description.as_ref().unwrap_or(&self.id);
                 format!("{} : {}", id, content)
             }
@@ -73,8 +75,15 @@ mod tests {
     #[test]
     fn state_basic() {
         let state = State::new("Active");
-        // mermaid-py lowercases IDs and uses "id : content" format
+        // normalize_id lowercases IDs; uses "id : content" format
         assert_eq!(state.to_mermaid(), "active : Active");
+    }
+
+    #[test]
+    fn state_with_spaces() {
+        let state = State::new("Active State");
+        // Spaces should be converted to underscores
+        assert_eq!(state.to_mermaid(), "active_state : Active State");
     }
 
     #[test]

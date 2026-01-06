@@ -4,7 +4,7 @@ pub mod diagrams;
 pub mod render;
 
 // Re-export commonly used types
-pub use core::{Config, Diagram, Direction, FromConfig, MermaidError, Style, Theme};
+pub use core::{normalize_id, Config, Diagram, Direction, FromConfig, MermaidError, Style, Theme};
 pub use diagrams::{
     // ER Diagram
     Attribute,
@@ -23,6 +23,7 @@ pub use diagrams::{
     // Flowchart
     FlowChart,
     Fork,
+    HrefType,
     Join,
     // Journey
     Journey,

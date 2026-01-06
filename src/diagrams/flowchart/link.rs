@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::core::normalize_id;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Link {
     pub from: String,
@@ -49,9 +51,9 @@ impl Link {
     /// Renders the link in mermaid syntax
     pub fn to_mermaid(&self) -> String {
         let arrow = self.style.arrow_syntax(&self.tail, &self.head);
-        // mermaid-py lowercases node IDs
-        let from = self.from.to_lowercase();
-        let to = self.to.to_lowercase();
+        // Normalize IDs to match mermaid-py's text_to_snake_case()
+        let from = normalize_id(&self.from);
+        let to = normalize_id(&self.to);
         match &self.label {
             Some(label) => format!("{} {}|{}| {}", from, arrow, label, to),
             None => format!("{} {} {}", from, arrow, to),
@@ -142,8 +144,15 @@ mod tests {
     #[test]
     fn link_default_arrow() {
         let link = Link::new("A", "B");
-        // mermaid-py lowercases IDs
+        // normalize_id lowercases IDs
         assert_eq!(link.to_mermaid(), "a --> b");
+    }
+
+    #[test]
+    fn link_with_spaces_in_ids() {
+        let link = Link::new("First Node", "Second Node");
+        // Spaces should be converted to underscores
+        assert_eq!(link.to_mermaid(), "first_node --> second_node");
     }
 
     #[test]

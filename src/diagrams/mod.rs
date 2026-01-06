@@ -10,7 +10,7 @@ pub mod state;
 pub use er::{
     Attribute, AttributeKey, AttributeType, Cardinality, ERDiagram, Entity, Relationship,
 };
-pub use flowchart::{FlowChart, Link, LinkHead, LinkStyle, Node, NodeShape, Subgraph};
+pub use flowchart::{FlowChart, HrefType, Link, LinkHead, LinkStyle, Node, NodeShape, Subgraph};
 pub use journey::{Journey, Section, Task};
 pub use mindmap::{Mindmap, MindmapNode, MindmapNodeShape};
 pub use pie::PieChart;

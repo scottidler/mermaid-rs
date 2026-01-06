@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::core::Style;
+use crate::core::{normalize_id, Style};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Node {
@@ -10,6 +10,12 @@ pub struct Node {
     pub shape: NodeShape,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub style: Option<Style>,
+    /// Optional hyperlink for clickable nodes
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub href: Option<String>,
+    /// How the hyperlink opens (default: Blank for new tab)
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub href_type: Option<HrefType>,
 }
 
 impl Node {
@@ -19,6 +25,8 @@ impl Node {
             label: label.into(),
             shape,
             style: None,
+            href: None,
+            href_type: None,
         }
     }
 
@@ -27,10 +35,73 @@ impl Node {
         self
     }
 
+    /// Add a clickable hyperlink to this node
+    pub fn with_href(mut self, href: impl Into<String>) -> Self {
+        self.href = Some(href.into());
+        self
+    }
+
+    /// Set how the hyperlink opens (default: Blank)
+    pub fn with_href_type(mut self, href_type: HrefType) -> Self {
+        self.href_type = Some(href_type);
+        self
+    }
+
     /// Renders the node in mermaid syntax
     pub fn to_mermaid(&self) -> String {
-        // mermaid-py lowercases IDs
-        format!("{}{}", self.id.to_lowercase(), self.shape.wrap(&self.label))
+        // Normalize ID to match mermaid-py's text_to_snake_case()
+        let normalized_id = normalize_id(&self.id);
+        let mut output = format!("{}{}", normalized_id, self.shape.wrap(&self.label));
+
+        // Add click directive if href is set
+        if let Some(href) = &self.href {
+            let href_type = self.href_type.unwrap_or_default();
+            output.push_str(&format!(
+                "\n    click {} \"{}\" {}",
+                normalized_id,
+                href,
+                href_type.as_str()
+            ));
+        }
+
+        output
+    }
+}
+
+/// How a hyperlink should open when clicked
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum HrefType {
+    /// Open in new tab/window (_blank)
+    #[default]
+    Blank,
+    /// Open in same frame (_self)
+    #[serde(rename = "self")]
+    Self_,
+    /// Open in parent frame (_parent)
+    Parent,
+    /// Open in full window (_top)
+    Top,
+}
+
+impl HrefType {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Blank => "_blank",
+            Self::Self_ => "_self",
+            Self::Parent => "_parent",
+            Self::Top => "_top",
+        }
+    }
+
+    pub fn parse(s: &str) -> Option<Self> {
+        match s.to_lowercase().as_str() {
+            "blank" | "_blank" => Some(Self::Blank),
+            "self" | "_self" => Some(Self::Self_),
+            "parent" | "_parent" => Some(Self::Parent),
+            "top" | "_top" => Some(Self::Top),
+            _ => None,
+        }
     }
 }
 
@@ -111,8 +182,15 @@ mod tests {
     #[test]
     fn node_to_mermaid() {
         let node = Node::new("A", "Start", NodeShape::Stadium);
-        // mermaid-py lowercases IDs
+        // normalize_id lowercases and converts spaces to underscores
         assert_eq!(node.to_mermaid(), "a([\"Start\"])");
+    }
+
+    #[test]
+    fn node_to_mermaid_with_spaces() {
+        let node = Node::new("First Node", "Start Here", NodeShape::Rectangle);
+        // Spaces should be converted to underscores
+        assert_eq!(node.to_mermaid(), "first_node[\"Start Here\"]");
     }
 
     #[test]
@@ -120,5 +198,34 @@ mod tests {
         assert_eq!(NodeShape::parse("rectangle"), Some(NodeShape::Rectangle));
         assert_eq!(NodeShape::parse("diamond"), Some(NodeShape::Rhombus));
         assert_eq!(NodeShape::parse("invalid"), None);
+    }
+
+    #[test]
+    fn node_with_href() {
+        let node =
+            Node::new("github", "GitHub", NodeShape::Rectangle).with_href("https://github.com");
+        let mermaid = node.to_mermaid();
+        assert!(mermaid.contains("github[\"GitHub\"]"));
+        assert!(mermaid.contains("click github \"https://github.com\" _blank"));
+    }
+
+    #[test]
+    fn node_with_href_and_type() {
+        let node = Node::new("docs", "Documentation", NodeShape::Rectangle)
+            .with_href("https://docs.example.com")
+            .with_href_type(HrefType::Self_);
+        let mermaid = node.to_mermaid();
+        assert!(mermaid.contains("click docs \"https://docs.example.com\" _self"));
+    }
+
+    #[test]
+    fn href_type_parse() {
+        assert_eq!(HrefType::parse("blank"), Some(HrefType::Blank));
+        assert_eq!(HrefType::parse("_blank"), Some(HrefType::Blank));
+        assert_eq!(HrefType::parse("self"), Some(HrefType::Self_));
+        assert_eq!(HrefType::parse("_self"), Some(HrefType::Self_));
+        assert_eq!(HrefType::parse("parent"), Some(HrefType::Parent));
+        assert_eq!(HrefType::parse("top"), Some(HrefType::Top));
+        assert_eq!(HrefType::parse("invalid"), None);
     }
 }

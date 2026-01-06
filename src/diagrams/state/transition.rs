@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::core::normalize_id;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Transition {
     pub from: String,
@@ -39,16 +41,16 @@ impl Transition {
     }
 
     pub fn to_mermaid(&self) -> String {
-        // mermaid-py lowercases state IDs (but not [*])
+        // Normalize IDs to match mermaid-py's text_to_snake_case() (but not [*])
         let from = if self.from == "[*]" {
             self.from.clone()
         } else {
-            self.from.to_lowercase()
+            normalize_id(&self.from)
         };
         let to = if self.to == "[*]" {
             self.to.clone()
         } else {
-            self.to.to_lowercase()
+            normalize_id(&self.to)
         };
         match &self.label {
             Some(label) => format!("{} --> {} : {}", from, to, label),
@@ -177,8 +179,15 @@ mod tests {
     #[test]
     fn transition_basic() {
         let t = Transition::new("A", "B");
-        // mermaid-py lowercases state IDs
+        // normalize_id lowercases state IDs
         assert_eq!(t.to_mermaid(), "a --> b");
+    }
+
+    #[test]
+    fn transition_with_spaces() {
+        let t = Transition::new("First State", "Second State");
+        // Spaces should be converted to underscores
+        assert_eq!(t.to_mermaid(), "first_state --> second_state");
     }
 
     #[test]
