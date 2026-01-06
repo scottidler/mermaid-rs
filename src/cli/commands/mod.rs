@@ -1,5 +1,9 @@
+pub mod er;
 pub mod flowchart;
+pub mod journey;
+pub mod mindmap;
 pub mod pie;
 pub mod render;
+pub mod requirement;
 pub mod sequence;
 pub mod state;

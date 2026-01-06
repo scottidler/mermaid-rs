@@ -95,14 +95,27 @@ impl OutputFormat {
 
 #[derive(Subcommand)]
 pub enum Commands {
+    /// Generate an ER (entity-relationship) diagram
+    #[command(name = "er")]
+    ER(commands::er::ERArgs),
+
     /// Generate a flowchart diagram
     Flowchart(commands::flowchart::FlowchartArgs),
+
+    /// Generate a user journey diagram
+    Journey(commands::journey::JourneyArgs),
+
+    /// Generate a mindmap diagram
+    Mindmap(commands::mindmap::MindmapArgs),
 
     /// Generate a pie chart
     Pie(commands::pie::PieArgs),
 
     /// Render a raw .mmd file or mermaid string
     Render(commands::render::RenderArgs),
+
+    /// Generate a requirement diagram
+    Requirement(commands::requirement::RequirementArgs),
 
     /// Generate a sequence diagram
     Sequence(commands::sequence::SequenceArgs),

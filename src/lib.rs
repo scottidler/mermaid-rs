@@ -6,8 +6,60 @@ pub mod render;
 // Re-export commonly used types
 pub use core::{Config, Diagram, Direction, FromConfig, MermaidError, Style, Theme};
 pub use diagrams::{
-    Choice, CompositeState, ConcurrentState, FlowChart, Fork, Join, Link, LinkHead, LinkStyle, Logic, LogicType,
-    Message, MessageType, Node, NodeShape, Note, NotePosition, Participant, ParticipantBox, ParticipantType, PieChart,
-    SequenceDiagram, State, StateDiagram, StateType, Subgraph, Transition,
+    // ER Diagram
+    Attribute,
+    AttributeKey,
+    AttributeType,
+    Cardinality,
+    // State
+    Choice,
+    CompositeState,
+    ConcurrentState,
+    ERDiagram,
+    // Requirement
+    Element,
+    ElementType,
+    Entity,
+    // Flowchart
+    FlowChart,
+    Fork,
+    Join,
+    // Journey
+    Journey,
+    Link,
+    LinkHead,
+    LinkStyle,
+    // Sequence
+    Logic,
+    LogicType,
+    Message,
+    MessageType,
+    // Mindmap
+    Mindmap,
+    MindmapNode,
+    MindmapNodeShape,
+    Node,
+    NodeShape,
+    Note,
+    NotePosition,
+    Participant,
+    ParticipantBox,
+    ParticipantType,
+    // Pie
+    PieChart,
+    Relationship,
+    ReqRelationship,
+    Requirement,
+    RequirementDiagram,
+    Risk,
+    Section,
+    SequenceDiagram,
+    State,
+    StateDiagram,
+    StateType,
+    Subgraph,
+    Task,
+    Transition,
+    VerifyMethod,
 };
 pub use render::{MermaidClient, RenderOptions};
