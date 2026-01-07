@@ -32,11 +32,15 @@ pub async fn run(args: PieArgs, global: &GlobalOptions) -> Result<(), MermaidErr
     config.theme = global.mode.theme();
 
     // Build render options from global options
+    // Use explicit --background-color if provided, otherwise use mode's default
     let render_options = RenderOptions {
         width: global.width,
         height: global.height,
         scale: global.scale,
-        background_color: global.mode.background_color().map(String::from),
+        background_color: global
+            .background_color
+            .clone()
+            .or_else(|| global.mode.background_color().map(String::from)),
     };
 
     // Create output handler

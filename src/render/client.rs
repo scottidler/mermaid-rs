@@ -143,7 +143,9 @@ impl MermaidClient {
             params.push(format!("scale={}", s));
         }
         if let Some(bg) = &options.background_color {
-            params.push(format!("bgColor={}", urlencoding::encode(bg)));
+            // mermaid.ink expects hex without # (e.g., "1e1e1e" not "#1e1e1e")
+            let bg_value = bg.strip_prefix('#').unwrap_or(bg);
+            params.push(format!("bgColor={}", bg_value));
         }
 
         if !params.is_empty() {

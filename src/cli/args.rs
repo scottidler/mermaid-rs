@@ -72,6 +72,11 @@ pub struct GlobalOptions {
     #[arg(long, global = true)]
     pub scale: Option<f32>,
 
+    /// Background color for PNG output (hex format: #1e1e1e)
+    /// Overrides the default background color from --mode
+    #[arg(long, global = true)]
+    pub background_color: Option<String>,
+
     /// Suppress non-error output
     #[arg(short, long, global = true)]
     pub quiet: bool,
