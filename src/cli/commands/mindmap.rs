@@ -1,7 +1,7 @@
 use clap::Parser;
 
 use crate::cli::{GlobalOptions, InputOptions, OutputFormat, OutputHandler};
-use crate::core::{Diagram, MermaidError};
+use crate::core::{Config, Diagram, MermaidError};
 use crate::diagrams::mindmap::{Mindmap, MindmapNodeShape};
 use crate::render::{MermaidClient, RenderOptions};
 
@@ -28,13 +28,17 @@ pub struct MindmapArgs {
 }
 
 pub async fn run(args: MindmapArgs, global: &GlobalOptions) -> Result<(), MermaidError> {
-    let diagram = build_diagram(&args).await?;
+    let mut diagram = build_diagram(&args).await?;
+
+    // Apply mode's theme to diagram config
+    let config = diagram.config.get_or_insert_with(Config::default);
+    config.theme = global.mode.theme();
 
     let render_options = RenderOptions {
         width: global.width,
         height: global.height,
         scale: global.scale,
-        background_color: None,
+        background_color: global.mode.background_color().map(String::from),
     };
 
     let output_handler = OutputHandler::new(

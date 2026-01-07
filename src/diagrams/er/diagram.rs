@@ -12,6 +12,8 @@ pub struct ERDiagram {
     pub entities: Vec<Entity>,
     #[serde(default)]
     pub relationships: Vec<Relationship>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub config: Option<Config>,
     #[serde(skip)]
     raw_mermaid: Option<String>,
 }
@@ -26,6 +28,7 @@ impl ERDiagram {
             title: None,
             entities: Vec::new(),
             relationships: Vec::new(),
+            config: None,
             raw_mermaid: Some(script),
         }
     }
@@ -53,7 +56,7 @@ impl Diagram for ERDiagram {
     }
 
     fn config(&self) -> Option<&Config> {
-        None
+        self.config.as_ref()
     }
 
     fn to_mermaid(&self) -> String {
@@ -174,6 +177,7 @@ impl ERDiagramBuilder {
             title: self.title,
             entities: self.entities,
             relationships: self.relationships,
+            config: None,
             raw_mermaid: None,
         }
     }

@@ -1,7 +1,7 @@
 use clap::Parser;
 
 use crate::cli::{GlobalOptions, InputOptions, OutputFormat, OutputHandler};
-use crate::core::{Diagram, Direction, MermaidError};
+use crate::core::{Config, Diagram, Direction, MermaidError};
 use crate::diagrams::flowchart::{FlowChart, Link, LinkStyle, Node, NodeShape, Subgraph};
 use crate::render::{MermaidClient, RenderOptions};
 
@@ -32,13 +32,17 @@ pub struct FlowchartArgs {
 }
 
 pub async fn run(args: FlowchartArgs, global: &GlobalOptions) -> Result<(), MermaidError> {
-    let chart = build_chart(&args).await?;
+    let mut chart = build_chart(&args).await?;
+
+    // Apply mode's theme to diagram config
+    let config = chart.config.get_or_insert_with(Config::default);
+    config.theme = global.mode.theme();
 
     let render_options = RenderOptions {
         width: global.width,
         height: global.height,
         scale: global.scale,
-        background_color: None,
+        background_color: global.mode.background_color().map(String::from),
     };
 
     let output_handler = OutputHandler::new(

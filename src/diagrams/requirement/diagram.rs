@@ -14,6 +14,8 @@ pub struct RequirementDiagram {
     pub elements: Vec<Element>,
     #[serde(default)]
     pub relationships: Vec<ReqRelationship>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub config: Option<Config>,
     #[serde(skip)]
     raw_mermaid: Option<String>,
 }
@@ -29,6 +31,7 @@ impl RequirementDiagram {
             requirements: Vec::new(),
             elements: Vec::new(),
             relationships: Vec::new(),
+            config: None,
             raw_mermaid: Some(script),
         }
     }
@@ -56,7 +59,7 @@ impl Diagram for RequirementDiagram {
     }
 
     fn config(&self) -> Option<&Config> {
-        None
+        self.config.as_ref()
     }
 
     fn to_mermaid(&self) -> String {
@@ -179,6 +182,7 @@ impl RequirementDiagramBuilder {
             requirements: self.requirements,
             elements: self.elements,
             relationships: self.relationships,
+            config: None,
             raw_mermaid: None,
         }
     }

@@ -9,6 +9,8 @@ pub struct Mindmap {
     pub root: MindmapNode,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub config: Option<Config>,
     #[serde(skip)]
     raw_mermaid: Option<String>,
 }
@@ -22,6 +24,7 @@ impl Mindmap {
         Self {
             root: MindmapNode::new(""),
             title: None,
+            config: None,
             raw_mermaid: Some(script),
         }
     }
@@ -49,7 +52,7 @@ impl Diagram for Mindmap {
     }
 
     fn config(&self) -> Option<&Config> {
-        None
+        self.config.as_ref()
     }
 
     fn to_mermaid(&self) -> String {
@@ -116,6 +119,7 @@ impl MindmapBuilder {
         Mindmap {
             root: self.root,
             title: self.title,
+            config: None,
             raw_mermaid: None,
         }
     }

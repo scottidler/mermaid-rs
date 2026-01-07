@@ -10,6 +10,8 @@ pub struct Journey {
     pub title: Option<String>,
     #[serde(default)]
     pub sections: Vec<Section>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub config: Option<Config>,
     #[serde(skip)]
     raw_mermaid: Option<String>,
 }
@@ -23,6 +25,7 @@ impl Journey {
         Self {
             title: None,
             sections: Vec::new(),
+            config: None,
             raw_mermaid: Some(script),
         }
     }
@@ -50,7 +53,7 @@ impl Diagram for Journey {
     }
 
     fn config(&self) -> Option<&Config> {
-        None
+        self.config.as_ref()
     }
 
     fn to_mermaid(&self) -> String {
@@ -146,6 +149,7 @@ impl JourneyBuilder {
         Journey {
             title: self.title,
             sections: self.sections,
+            config: None,
             raw_mermaid: None,
         }
     }

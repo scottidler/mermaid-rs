@@ -1,3 +1,4 @@
+use clap::ValueEnum;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::str::FromStr;
@@ -50,6 +51,55 @@ impl FromStr for Theme {
             "neutral" => Ok(Self::Neutral),
             "base" => Ok(Self::Base),
             _ => Err(format!("Invalid theme: {}", s)),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize, ValueEnum)]
+#[serde(rename_all = "lowercase")]
+pub enum Mode {
+    Light,
+    #[default]
+    Dark,
+}
+
+impl Mode {
+    pub fn theme(&self) -> Theme {
+        match self {
+            Self::Light => Theme::Default,
+            Self::Dark => Theme::Dark,
+        }
+    }
+
+    pub fn background_color(&self) -> Option<&'static str> {
+        match self {
+            Self::Light => None,
+            Self::Dark => Some("#1e1e1e"),
+        }
+    }
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::Light => "light",
+            Self::Dark => "dark",
+        }
+    }
+}
+
+impl fmt::Display for Mode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+impl FromStr for Mode {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "light" => Ok(Self::Light),
+            "dark" => Ok(Self::Dark),
+            _ => Err(format!("Invalid mode: {}. Use 'light' or 'dark'", s)),
         }
     }
 }

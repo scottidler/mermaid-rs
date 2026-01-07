@@ -3,6 +3,7 @@ use clap_complete::Shell;
 use std::path::PathBuf;
 
 use super::commands;
+use crate::core::Mode;
 
 #[derive(Parser)]
 #[command(
@@ -30,6 +31,10 @@ pub struct GlobalOptions {
         global = true
     )]
     pub server: String,
+
+    /// Display mode (affects theme and background)
+    #[arg(long, default_value = "dark", global = true)]
+    pub mode: Mode,
 
     /// Diagram theme
     #[arg(short, long, default_value = "default", global = true)]

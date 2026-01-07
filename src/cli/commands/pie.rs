@@ -1,7 +1,7 @@
 use clap::Parser;
 
 use crate::cli::{GlobalOptions, InputOptions, OutputFormat, OutputHandler};
-use crate::core::{Diagram, MermaidError};
+use crate::core::{Config, Diagram, MermaidError};
 use crate::diagrams::pie::PieChart;
 use crate::render::{MermaidClient, RenderOptions};
 
@@ -25,14 +25,18 @@ pub struct PieArgs {
 
 pub async fn run(args: PieArgs, global: &GlobalOptions) -> Result<(), MermaidError> {
     // Build the pie chart from args or input file
-    let chart = build_chart(&args).await?;
+    let mut chart = build_chart(&args).await?;
+
+    // Apply mode's theme to diagram config
+    let config = chart.config.get_or_insert_with(Config::default);
+    config.theme = global.mode.theme();
 
     // Build render options from global options
     let render_options = RenderOptions {
         width: global.width,
         height: global.height,
         scale: global.scale,
-        background_color: None,
+        background_color: global.mode.background_color().map(String::from),
     };
 
     // Create output handler

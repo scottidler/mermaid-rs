@@ -27,11 +27,12 @@ pub async fn run(args: RenderArgs, global: &GlobalOptions) -> Result<(), Mermaid
     let script = get_script(&args).await?;
 
     // Build render options from global options
+    // Note: For raw mermaid passthrough, we can't inject theme but we can set background
     let render_options = RenderOptions {
         width: global.width,
         height: global.height,
         scale: global.scale,
-        background_color: None,
+        background_color: global.mode.background_color().map(String::from),
     };
 
     // Create output handler
