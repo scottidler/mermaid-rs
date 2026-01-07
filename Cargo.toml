@@ -10,6 +10,10 @@ repository = "https://github.com/scottidler/mermaid-rs"
 keywords = ["mermaid", "diagram", "cli", "visualization"]
 categories = ["command-line-utilities", "visualization"]
 
+[[bin]]
+name = "mermaid"
+path = "src/main.rs"
+
 [dependencies]
 # CLI
 clap = { version = "4", features = ["derive", "env"] }
