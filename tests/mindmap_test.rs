@@ -156,9 +156,7 @@ fn mindmap_diagram_type() {
 fn mindmap_build_script_with_theme() {
     use mermaid_rs::core::Theme;
 
-    let mindmap = Mindmap::builder("Root")
-        .theme(Theme::Dark)
-        .build();
+    let mindmap = Mindmap::builder("Root").theme(Theme::Dark).build();
 
     let script = mindmap.build_script();
     assert!(script.contains("%%{init:"));
