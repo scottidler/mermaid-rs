@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::core::{Config, Diagram, MermaidError};
+use crate::core::{Config, Diagram, MermaidError, Theme};
 
 use super::{Attribute, AttributeKey, AttributeType, Entity, Relationship};
 
@@ -86,6 +86,7 @@ pub struct ERDiagramBuilder {
     title: Option<String>,
     entities: Vec<Entity>,
     relationships: Vec<Relationship>,
+    config: Option<Config>,
 }
 
 impl ERDiagramBuilder {
@@ -172,12 +173,18 @@ impl ERDiagramBuilder {
         self
     }
 
+    pub fn theme(mut self, theme: Theme) -> Self {
+        let config = self.config.get_or_insert_with(Config::default);
+        config.theme = theme;
+        self
+    }
+
     pub fn build(self) -> ERDiagram {
         ERDiagram {
             title: self.title,
             entities: self.entities,
             relationships: self.relationships,
-            config: None,
+            config: self.config,
             raw_mermaid: None,
         }
     }

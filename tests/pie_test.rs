@@ -13,9 +13,9 @@ fn pie_chart_empty() {
 #[test]
 fn pie_chart_with_title() {
     let chart = PieChart::builder().title("My Chart").build();
-    // mermaid-py puts title in frontmatter, not in the diagram body
-    let script = chart.build_script();
-    assert!(script.contains("title: My Chart"));
+    // Title is now inline in mermaid syntax: pie title "Title"
+    let mermaid = chart.to_mermaid();
+    assert!(mermaid.contains("title My Chart"));
 }
 
 #[test]
@@ -49,10 +49,9 @@ fn pie_chart_from_json() {
 
     let chart = PieChart::from_json(json).unwrap();
     let mermaid = chart.to_mermaid();
-    let script = chart.build_script();
 
-    // mermaid-py puts title in frontmatter
-    assert!(script.contains("title: Languages"));
+    // Title is now inline in mermaid syntax
+    assert!(mermaid.contains("title Languages"));
     assert!(mermaid.contains("\"Rust\" : 40"));
 }
 
@@ -70,11 +69,10 @@ data:
 
     let chart = PieChart::from_yaml(yaml).unwrap();
     let mermaid = chart.to_mermaid();
-    let script = chart.build_script();
 
     assert!(mermaid.contains("showData"));
-    // mermaid-py puts title in frontmatter
-    assert!(script.contains("title: Languages"));
+    // Title is now inline in mermaid syntax
+    assert!(mermaid.contains("title Languages"));
 }
 
 #[test]
@@ -106,14 +104,19 @@ fn pie_data_creation() {
 }
 
 #[test]
-fn pie_chart_build_script_includes_frontmatter() {
-    let chart = PieChart::builder().title("Test").data("A", 100.0).build();
+fn pie_chart_build_script_with_theme() {
+    use mermaid_rs::core::Theme;
+
+    let chart = PieChart::builder()
+        .theme(Theme::Dark)
+        .data("A", 100.0)
+        .build();
 
     let script = chart.build_script();
 
-    // Should include frontmatter when title is present
-    assert!(script.contains("---"));
-    assert!(script.contains("title: Test"));
+    // Should include init directive when theme is set
+    assert!(script.contains("%%{init:"));
+    assert!(script.contains("'theme': 'dark'"));
 }
 
 #[test]

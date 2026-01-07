@@ -238,13 +238,15 @@ fn sequence_diagram_type() {
 }
 
 #[test]
-fn sequence_build_script_includes_frontmatter() {
+fn sequence_build_script_with_theme() {
+    use mermaid_rs::core::Theme;
+
     let diagram = SequenceDiagram::builder()
-        .title("Test Sequence")
+        .theme(Theme::Dark)
         .participant_simple("A")
         .build();
 
     let script = diagram.build_script();
-    assert!(script.contains("---"));
-    assert!(script.contains("title: Test Sequence"));
+    assert!(script.contains("%%{init:"));
+    assert!(script.contains("'theme': 'dark'"));
 }

@@ -157,6 +157,35 @@ impl Config {
         }
         yaml
     }
+
+    /// Generate %%{init}%% directive for mermaid.ink compatibility
+    pub fn to_init_directive(&self) -> String {
+        let mut parts = vec![format!("'theme': '{}'", self.theme.as_str())];
+
+        if let Some(vars) = &self.theme_variables {
+            let mut var_parts = Vec::new();
+            if let Some(c) = &vars.primary_color {
+                var_parts.push(format!("'primaryColor': '{}'", c));
+            }
+            if let Some(c) = &vars.secondary_color {
+                var_parts.push(format!("'secondaryColor': '{}'", c));
+            }
+            if let Some(c) = &vars.tertiary_color {
+                var_parts.push(format!("'tertiaryColor': '{}'", c));
+            }
+            if let Some(c) = &vars.primary_text_color {
+                var_parts.push(format!("'primaryTextColor': '{}'", c));
+            }
+            if let Some(c) = &vars.line_color {
+                var_parts.push(format!("'lineColor': '{}'", c));
+            }
+            if !var_parts.is_empty() {
+                parts.push(format!("'themeVariables': {{{}}}", var_parts.join(", ")));
+            }
+        }
+
+        format!("%%{{init: {{{}}}}}%%", parts.join(", "))
+    }
 }
 
 #[cfg(test)]

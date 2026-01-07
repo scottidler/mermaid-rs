@@ -196,13 +196,15 @@ fn flowchart_diagram_type() {
 }
 
 #[test]
-fn flowchart_build_script_includes_frontmatter() {
+fn flowchart_build_script_with_theme() {
+    use mermaid_rs::core::Theme;
+
     let chart = FlowChart::builder()
-        .title("My Flow")
+        .theme(Theme::Dark)
         .node_simple("A", "Test")
         .build();
 
     let script = chart.build_script();
-    assert!(script.contains("---"));
-    assert!(script.contains("title: My Flow"));
+    assert!(script.contains("%%{init:"));
+    assert!(script.contains("'theme': 'dark'"));
 }

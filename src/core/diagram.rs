@@ -14,20 +14,14 @@ pub trait Diagram: Send + Sync {
     /// Returns optional configuration
     fn config(&self) -> Option<&Config>;
 
-    /// Builds the complete mermaid script including frontmatter
+    /// Builds the complete mermaid script including init directive
     fn build_script(&self) -> String {
         let mut script = String::new();
 
-        // Add YAML frontmatter if title or config present
-        if self.title().is_some() || self.config().is_some() {
-            script.push_str("---\n");
-            if let Some(title) = self.title() {
-                script.push_str(&format!("title: {}\n", title));
-            }
-            if let Some(config) = self.config() {
-                script.push_str(&config.to_yaml());
-            }
-            script.push_str("---\n\n");
+        // Add %%{init}%% directive for config (mermaid.ink compatible)
+        if let Some(config) = self.config() {
+            script.push_str(&config.to_init_directive());
+            script.push('\n');
         }
 
         script.push_str(&self.to_mermaid());
@@ -80,14 +74,14 @@ mod tests {
     }
 
     #[test]
-    fn build_script_with_title() {
+    fn build_script_with_config() {
         let diagram = TestDiagram {
-            title: Some("My Diagram".to_string()),
-            config: None,
+            title: None,
+            config: Some(Config::new().with_theme(crate::core::Theme::Dark)),
         };
         let script = diagram.build_script();
-        assert!(script.starts_with("---\n"));
-        assert!(script.contains("title: My Diagram"));
+        assert!(script.starts_with("%%{init:"));
+        assert!(script.contains("'theme': 'dark'"));
         assert!(script.contains("graph TD"));
     }
 }

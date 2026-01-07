@@ -150,15 +150,17 @@ fn er_diagram_type() {
 }
 
 #[test]
-fn er_diagram_build_script_includes_frontmatter() {
+fn er_diagram_build_script_with_theme() {
+    use mermaid_rs::core::Theme;
+
     let diagram = ERDiagram::builder()
-        .title("My ER Diagram")
+        .theme(Theme::Dark)
         .entity_simple("Test")
         .build();
 
     let script = diagram.build_script();
-    assert!(script.contains("---"));
-    assert!(script.contains("title: My ER Diagram"));
+    assert!(script.contains("%%{init:"));
+    assert!(script.contains("'theme': 'dark'"));
 }
 
 #[test]

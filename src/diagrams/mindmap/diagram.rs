@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::core::{Config, Diagram, MermaidError};
+use crate::core::{Config, Diagram, MermaidError, Theme};
 
 use super::{MindmapNode, MindmapNodeShape};
 
@@ -70,6 +70,7 @@ impl Diagram for Mindmap {
 pub struct MindmapBuilder {
     root: MindmapNode,
     title: Option<String>,
+    config: Option<Config>,
 }
 
 impl MindmapBuilder {
@@ -77,6 +78,7 @@ impl MindmapBuilder {
         Self {
             root: MindmapNode::new(root_text),
             title: None,
+            config: None,
         }
     }
 
@@ -115,11 +117,17 @@ impl MindmapBuilder {
         self
     }
 
+    pub fn theme(mut self, theme: Theme) -> Self {
+        let config = self.config.get_or_insert_with(Config::default);
+        config.theme = theme;
+        self
+    }
+
     pub fn build(self) -> Mindmap {
         Mindmap {
             root: self.root,
             title: self.title,
-            config: None,
+            config: self.config,
             raw_mermaid: None,
         }
     }

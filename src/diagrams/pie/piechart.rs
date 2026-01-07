@@ -81,7 +81,11 @@ impl Diagram for PieChart {
             output.push_str(" showData");
         }
 
-        // Title goes in frontmatter, not on pie line (matches mermaid-py)
+        // Add title inline (mermaid syntax: pie title "Title")
+        if let Some(title) = &self.title {
+            output.push_str(&format!(" title {}", title));
+        }
+
         output.push('\n');
 
         // Add data entries
@@ -189,9 +193,7 @@ mod tests {
             .build();
 
         let mermaid = chart.to_mermaid();
-        assert!(mermaid.starts_with("pie\n"));
-        // Title goes in frontmatter, not on pie line
-        assert!(!mermaid.contains("title Browser Market Share"));
+        assert!(mermaid.starts_with("pie title Browser Market Share\n"));
         assert!(mermaid.contains("\"Chrome\" : 65"));
         assert!(mermaid.contains("\"Firefox\" : 20"));
     }
@@ -281,7 +283,7 @@ slices:
             .build();
 
         let script = chart.build_script();
-        assert!(script.contains("---"));
-        assert!(script.contains("theme: dark"));
+        assert!(script.contains("%%{init:"));
+        assert!(script.contains("'theme': 'dark'"));
     }
 }
