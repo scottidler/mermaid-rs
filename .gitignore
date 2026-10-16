@@ -27,3 +27,5 @@ target
 # Compatibility test artifacts (mermaid-py comparison)
 compat/.venv/
 compat/output/
+/rc
+mutants.out*
