@@ -9,7 +9,7 @@ use crate::core::Mode;
 #[command(
     name = "mermaid",
     about = "A CLI tool for generating Mermaid diagrams programmatically",
-    version = env!("GIT_DESCRIBE"),
+    version = env!("BUILD_VERSION"),
     after_help = "For more information, visit: https://github.com/scottidler/mermaid-rs"
 )]
 pub struct Cli {

@@ -59,4 +59,4 @@ tokio-test = "0.4"
 wiremock = "0.6"
 
 [build-dependencies]
-# For build.rs if needed
+build-version = { git = "https://github.com/tatari-tv/build-version-rs", tag = "v0.1.0", version = "0.1.0" }
